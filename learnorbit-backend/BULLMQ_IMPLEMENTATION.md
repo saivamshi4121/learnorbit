@@ -2,7 +2,7 @@
 
 ## ✅ Implementation Complete!
 
-I've successfully extended the CyberOrbit365 backend with a **professional background job system** using **BullMQ** and **Redis**.
+I've successfully extended the LearnOrbit backend with a **professional background job system** using **BullMQ** and **Redis**.
 
 ---
 
@@ -112,7 +112,7 @@ res.json({
 
 ```env
 # Email Configuration
-ADMIN_EMAIL=admin@cyberorbit365.com  # Receives contact form notifications
+ADMIN_EMAIL=admin@learnorbit.com  # Receives contact form notifications
 ```
 
 ---
@@ -199,8 +199,8 @@ curl -X POST http://localhost:65000/api/contact \
 ```
 info: Contact email job added to queue {jobId: "1", leadId: 123}
 info: Processing email job: contact-notification {jobId: "1", attempt: 1}
-info: 📧 Email sent successfully {to: "admin@cyberorbit365.com", subject: "New Contact Form Submission - John Doe"}
-info: 📧 Email sent successfully {to: "john@example.com", subject: "Thank you for contacting CyberOrbit365"}
+info: 📧 Email sent successfully {to: "admin@learnorbit.com", subject: "New Contact Form Submission - John Doe"}
+info: 📧 Email sent successfully {to: "john@example.com", subject: "Thank you for contacting LearnOrbit"}
 info: ✅ Email job completed successfully: contact-notification {jobId: "1"}
 ```
 

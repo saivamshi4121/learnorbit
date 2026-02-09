@@ -1,4 +1,4 @@
-# 🎉 Setup Complete - CyberOrbit365 Backend with Redis
+# 🎉 Setup Complete - LearnOrbit Backend with Redis
 
 ## ✅ What's Running
 
@@ -88,7 +88,7 @@ Expected response:
 ```json
 {
   "success": true,
-  "message": "CyberOrbit365 Backend Running Securely"
+  "message": "LearnOrbit Backend Running Securely"
 }
 ```
 
@@ -119,7 +119,7 @@ docker exec -it cyberorbit-redis redis-cli monitor
 ## 📂 Project Structure
 
 ```
-cyberorbit365-backend/
+learnorbit-backend/
 ├── docker-compose.yml          # Redis container configuration
 ├── .env                        # Environment variables (DO NOT COMMIT)
 ├── .gitignore                  # Git ignore rules
@@ -175,14 +175,14 @@ Your `.env` file contains:
 ```env
 PORT=65000
 NODE_ENV=production
-FRONTEND_URL=https://app.cyberorbit365.com
+FRONTEND_URL=https://app.learnorbit.com
 
 # Database
 DB_HOST=localhost
 DB_PORT=3306
 DB_USER=root
 DB_PASSWORD=system
-DB_NAME=cyberorbit365
+DB_NAME=learnorbit
 
 # Redis
 REDIS_HOST=127.0.0.1

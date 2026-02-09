@@ -47,7 +47,7 @@ app.use(redisRateLimiter);
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ success: true, message: 'CyberOrbit365 Backend Running Securely' });
+  res.json({ success: true, message: 'LearnOrbit Backend Running Securely' });
 });
 
 // Mount feature routes

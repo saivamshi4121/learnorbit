@@ -2,7 +2,7 @@
 
 ## 🎯 Overview
 
-The CyberOrbit365 backend now includes a professional background job system using **BullMQ** and **Redis**. This allows you to process time-consuming tasks (like sending emails) asynchronously without blocking API responses.
+The LearnOrbit backend now includes a professional background job system using **BullMQ** and **Redis**. This allows you to process time-consuming tasks (like sending emails) asynchronously without blocking API responses.
 
 ## 📦 Architecture
 
@@ -239,7 +239,7 @@ curl -X POST http://localhost:65000/api/contact \
 ```
 info: Contact email job added to queue
 info: Processing email job: contact-notification
-info: 📧 Email sent successfully (to: admin@cyberorbit365.com)
+info: 📧 Email sent successfully (to: admin@learnorbit.com)
 info: 📧 Email sent successfully (to: test@example.com)
 info: ✅ Email job completed successfully
 ```
@@ -321,13 +321,13 @@ module.exports = {
 
 ```ini
 [Unit]
-Description=CyberOrbit365 API
+Description=LearnOrbit API
 After=network.target
 
 [Service]
 Type=simple
 User=www-data
-WorkingDirectory=/var/www/cyberorbit365-backend
+WorkingDirectory=/var/www/learnorbit-backend
 ExecStart=/usr/bin/node src/app.js
 Restart=always
 
@@ -339,13 +339,13 @@ WantedBy=multi-user.target
 
 ```ini
 [Unit]
-Description=CyberOrbit365 Email Worker
+Description=LearnOrbit Email Worker
 After=network.target
 
 [Service]
 Type=simple
 User=www-data
-WorkingDirectory=/var/www/cyberorbit365-backend
+WorkingDirectory=/var/www/learnorbit-backend
 ExecStart=/usr/bin/node src/workers/email.worker.js
 Restart=always
 
@@ -383,7 +383,7 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 async function sendEmail(to, subject, body) {
   const msg = {
     to,
-    from: 'noreply@cyberorbit365.com',
+    from: 'noreply@learnorbit.com',
     subject,
     html: body,
   };
@@ -411,7 +411,7 @@ const sesClient = new SESClient({ region: 'us-east-1' });
 
 async function sendEmail(to, subject, body) {
   const command = new SendEmailCommand({
-    Source: 'noreply@cyberorbit365.com',
+    Source: 'noreply@learnorbit.com',
     Destination: { ToAddresses: [to] },
     Message: {
       Subject: { Data: subject },
@@ -444,7 +444,7 @@ const transporter = nodemailer.createTransport({
 
 async function sendEmail(to, subject, body) {
   return await transporter.sendMail({
-    from: 'noreply@cyberorbit365.com',
+    from: 'noreply@learnorbit.com',
     to,
     subject,
     html: body,

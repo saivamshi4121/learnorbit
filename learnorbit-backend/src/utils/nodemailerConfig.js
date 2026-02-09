@@ -22,7 +22,7 @@ const transporter = nodemailer.createTransport({
 // Wrapper function to send an email. Returns the result from Nodemailer.
 async function sendMail({ to, subject, html }) {
   const mailOptions = {
-    from: process.env.EMAIL_FROM || 'no-reply@cyberorbit365.com',
+    from: process.env.EMAIL_FROM || 'no-reply@learnorbit.com',
     to,
     subject,
     html,

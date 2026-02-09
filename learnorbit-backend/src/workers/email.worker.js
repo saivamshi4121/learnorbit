@@ -22,26 +22,26 @@ const logger = require('../utils/logger');
  * @returns {Promise<Object>} Send result
  */
 async function sendEmail(to, subject, body) {
-    // TODO: Replace with actual email service integration
-    // Example with SendGrid:
-    // const sgMail = require('@sendgrid/mail');
-    // sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-    // await sgMail.send({ to, from: 'noreply@cyberorbit365.com', subject, html: body });
+  // TODO: Replace with actual email service integration
+  // Example with SendGrid:
+  // const sgMail = require('@sendgrid/mail');
+  // sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+  // await sgMail.send({ to, from: 'noreply@learnorbit.com', subject, html: body });
 
-    // Simulate email sending delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
+  // Simulate email sending delay
+  await new Promise(resolve => setTimeout(resolve, 1000));
 
-    logger.info(`📧 Email sent successfully`, {
-        to,
-        subject,
-        bodyLength: body.length,
-    });
+  logger.info(`📧 Email sent successfully`, {
+    to,
+    subject,
+    bodyLength: body.length,
+  });
 
-    return {
-        success: true,
-        messageId: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        timestamp: new Date().toISOString(),
-    };
+  return {
+    success: true,
+    messageId: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    timestamp: new Date().toISOString(),
+  };
 }
 
 /**
@@ -49,10 +49,10 @@ async function sendEmail(to, subject, body) {
  * @param {Object} data - Job data
  */
 async function processContactNotification(data) {
-    const { name, email, message, leadId } = data;
+  const { name, email, message, leadId } = data;
 
-    const subject = `New Contact Form Submission - ${name}`;
-    const body = `
+  const subject = `New Contact Form Submission - ${name}`;
+  const body = `
     <!DOCTYPE html>
     <html>
     <head>
@@ -83,20 +83,20 @@ async function processContactNotification(data) {
           </p>
         </div>
         <div class="footer">
-          <p>CyberOrbit365 - Automated Notification System</p>
+          <p>LearnOrbit - Automated Notification System</p>
         </div>
       </div>
     </body>
     </html>
   `;
 
-    // Send to admin email (configure in .env)
-    const adminEmail = process.env.ADMIN_EMAIL || 'admin@cyberorbit365.com';
-    await sendEmail(adminEmail, subject, body);
+  // Send to admin email (configure in .env)
+  const adminEmail = process.env.ADMIN_EMAIL || 'admin@learnorbit.com';
+  await sendEmail(adminEmail, subject, body);
 
-    // Optionally send confirmation to user
-    const confirmationSubject = 'Thank you for contacting CyberOrbit365';
-    const confirmationBody = `
+  // Optionally send confirmation to user
+  const confirmationSubject = 'Thank you for contacting LearnOrbit';
+  const confirmationBody = `
     <!DOCTYPE html>
     <html>
     <head>
@@ -116,20 +116,20 @@ async function processContactNotification(data) {
           <p>Hi ${name},</p>
           <p>We've received your message and our team will get back to you within 24 hours.</p>
           <p>Your reference ID is: <strong>#${leadId}</strong></p>
-          <p>Best regards,<br>The CyberOrbit365 Team</p>
+          <p>Best regards,<br>The LearnOrbit Team</p>
         </div>
       </div>
     </body>
     </html>
   `;
 
-    await sendEmail(email, confirmationSubject, confirmationBody);
+  await sendEmail(email, confirmationSubject, confirmationBody);
 
-    return {
-        adminEmailSent: true,
-        confirmationEmailSent: true,
-        leadId,
-    };
+  return {
+    adminEmailSent: true,
+    confirmationEmailSent: true,
+    leadId,
+  };
 }
 
 /**
@@ -137,10 +137,10 @@ async function processContactNotification(data) {
  * @param {Object} data - Job data
  */
 async function processWelcomeEmail(data) {
-    const { name, email, userId } = data;
+  const { name, email, userId } = data;
 
-    const subject = 'Welcome to CyberOrbit365! 🚀';
-    const body = `
+  const subject = 'Welcome to LearnOrbit! 🚀';
+  const body = `
     <!DOCTYPE html>
     <html>
     <head>
@@ -155,11 +155,11 @@ async function processWelcomeEmail(data) {
     <body>
       <div class="container">
         <div class="header">
-          <h1>Welcome to CyberOrbit365!</h1>
+          <h1>Welcome to LearnOrbit!</h1>
         </div>
         <div class="content">
           <p>Hi ${name},</p>
-          <p>Welcome aboard! We're thrilled to have you join the CyberOrbit365 community.</p>
+          <p>Welcome aboard! We're thrilled to have you join the LearnOrbit community.</p>
           <p>Your account has been successfully created. Here's what you can do next:</p>
           <ul>
             <li>Complete your profile</li>
@@ -176,12 +176,12 @@ async function processWelcomeEmail(data) {
     </html>
   `;
 
-    await sendEmail(email, subject, body);
+  await sendEmail(email, subject, body);
 
-    return {
-        emailSent: true,
-        userId,
-    };
+  return {
+    emailSent: true,
+    userId,
+  };
 }
 
 /**
@@ -189,11 +189,11 @@ async function processWelcomeEmail(data) {
  * @param {Object} data - Job data
  */
 async function processPaidEnrollment(data) {
-    const { student_name, student_email, course_title, instructor_email, admin_email, enrollment_id } = data;
+  const { student_name, student_email, course_title, instructor_email, admin_email, enrollment_id } = data;
 
-    const subject = 'New Paid Enrollment Request – Approval Required';
-    const approvalLink = `${process.env.ADMIN_DASHBOARD_URL || 'https://admin.cyberorbit365.com'}/enrollments/${enrollment_id}/approve`;
-    const body = `
+  const subject = 'New Paid Enrollment Request – Approval Required';
+  const approvalLink = `${process.env.ADMIN_DASHBOARD_URL || 'https://admin.learnorbit.com'}/enrollments/${enrollment_id}/approve`;
+  const body = `
     <!DOCTYPE html>
     <html>
     <head>
@@ -220,20 +220,25 @@ async function processPaidEnrollment(data) {
     </html>
     `;
 
-    // Send email to admin (and optionally to instructor)
-    const recipients = [admin_email || process.env.ADMIN_EMAIL];
-    if (instructor_email) recipients.push(instructor_email);
-    for (const to of recipients) {
-        await sendEmail(to, subject, body);
-    }
-    return { emailSent: true, enrollment_id, recipients };
+  // Send email to admin (and optionally to instructor)
+  const recipients = [admin_email || process.env.ADMIN_EMAIL];
+  if (instructor_email) recipients.push(instructor_email);
+  for (const to of recipients) {
+    await sendEmail(to, subject, body);
+  }
+  return { emailSent: true, enrollment_id, recipients };
 }
 
-    const { email, resetToken, userId } = data;
+/**
+ * Process password reset email
+ * @param {Object} data - Job data
+ */
+async function processPasswordResetEmail(data) {
+  const { email, resetToken, userId } = data;
 
-    const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
-    const subject = 'Password Reset Request - CyberOrbit365';
-    const body = `
+  const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
+  const subject = 'Password Reset Request - LearnOrbit';
+  const body = `
     <!DOCTYPE html>
     <html>
     <head>
@@ -268,12 +273,12 @@ async function processPaidEnrollment(data) {
     </html>
   `;
 
-    await sendEmail(email, subject, body);
+  await sendEmail(email, subject, body);
 
-    return {
-        emailSent: true,
-        userId,
-    };
+  return {
+    emailSent: true,
+    userId,
+  };
 }
 
 /**
@@ -281,114 +286,114 @@ async function processPaidEnrollment(data) {
  * Routes jobs to appropriate handlers based on job name
  */
 async function processEmailJob(job) {
-    const { name, data } = job;
+  const { name, data } = job;
 
-    logger.info(`Processing email job: ${name}`, {
-        jobId: job.id,
-        attempt: job.attemptsMade + 1,
-        maxAttempts: job.opts.attempts,
+  logger.info(`Processing email job: ${name}`, {
+    jobId: job.id,
+    attempt: job.attemptsMade + 1,
+    maxAttempts: job.opts.attempts,
+  });
+
+  try {
+    let result;
+
+    switch (name) {
+      case 'contact-notification':
+        result = await processContactNotification(data);
+        break;
+
+      case 'welcome-email':
+        result = await processWelcomeEmail(data);
+        break;
+
+      case 'password-reset':
+        result = await processPasswordResetEmail(data);
+        break;
+
+      default:
+        throw new Error(`Unknown job type: ${name}`);
+    }
+
+    logger.info(`✅ Email job completed successfully: ${name}`, {
+      jobId: job.id,
+      result,
     });
 
-    try {
-        let result;
+    // Update job progress to 100%
+    await job.updateProgress(100);
 
-        switch (name) {
-            case 'contact-notification':
-                result = await processContactNotification(data);
-                break;
+    return result;
 
-            case 'welcome-email':
-                result = await processWelcomeEmail(data);
-                break;
+  } catch (error) {
+    logger.error(`❌ Email job failed: ${name}`, {
+      jobId: job.id,
+      attempt: job.attemptsMade + 1,
+      error: error.message,
+      stack: error.stack,
+    });
 
-            case 'password-reset':
-                result = await processPasswordResetEmail(data);
-                break;
-
-            default:
-                throw new Error(`Unknown job type: ${name}`);
-        }
-
-        logger.info(`✅ Email job completed successfully: ${name}`, {
-            jobId: job.id,
-            result,
-        });
-
-        // Update job progress to 100%
-        await job.updateProgress(100);
-
-        return result;
-
-    } catch (error) {
-        logger.error(`❌ Email job failed: ${name}`, {
-            jobId: job.id,
-            attempt: job.attemptsMade + 1,
-            error: error.message,
-            stack: error.stack,
-        });
-
-        // Re-throw to trigger retry mechanism
-        throw error;
-    }
+    // Re-throw to trigger retry mechanism
+    throw error;
+  }
 }
 
 // Create the worker
 const emailWorker = new Worker('email', processEmailJob, {
-    connection: redisClient,
-    concurrency: 5,                 // Process up to 5 jobs concurrently
-    limiter: {
-        max: 10,                      // Max 10 jobs
-        duration: 1000,               // Per second (rate limiting)
-    },
+  connection: redisClient,
+  concurrency: 5,                 // Process up to 5 jobs concurrently
+  limiter: {
+    max: 10,                      // Max 10 jobs
+    duration: 1000,               // Per second (rate limiting)
+  },
 });
 
 // Worker event listeners
 emailWorker.on('completed', (job, result) => {
-    logger.info(`✅ Job completed`, {
-        jobId: job.id,
-        jobName: job.name,
-        duration: Date.now() - job.timestamp,
-        result,
-    });
+  logger.info(`✅ Job completed`, {
+    jobId: job.id,
+    jobName: job.name,
+    duration: Date.now() - job.timestamp,
+    result,
+  });
 });
 
 emailWorker.on('failed', (job, error) => {
-    logger.error(`❌ Job failed`, {
-        jobId: job?.id,
-        jobName: job?.name,
-        attempt: job?.attemptsMade,
-        maxAttempts: job?.opts?.attempts,
-        error: error.message,
-        willRetry: job?.attemptsMade < job?.opts?.attempts,
-    });
+  logger.error(`❌ Job failed`, {
+    jobId: job?.id,
+    jobName: job?.name,
+    attempt: job?.attemptsMade,
+    maxAttempts: job?.opts?.attempts,
+    error: error.message,
+    willRetry: job?.attemptsMade < job?.opts?.attempts,
+  });
 });
 
 emailWorker.on('error', (error) => {
-    logger.error(`Worker error: ${error.message}`, {
-        error: error.stack,
-    });
+  logger.error(`Worker error: ${error.message}`, {
+    error: error.stack,
+  });
 });
 
 emailWorker.on('stalled', (jobId) => {
-    logger.warn(`Job stalled: ${jobId}`);
+  logger.warn(`Job stalled: ${jobId}`);
 });
 
 emailWorker.on('progress', (job, progress) => {
-    logger.debug(`Job progress: ${job.id} - ${progress}%`);
+  logger.debug(`Job progress: ${job.id} - ${progress}%`);
 });
 
 // Graceful shutdown
 async function gracefulShutdown() {
-    logger.info('Shutting down email worker gracefully...');
+  logger.info('Shutting down email worker gracefully...');
 
-    try {
-        await emailWorker.close();
-        logger.info('Email worker closed successfully');
-        process.exit(0);
-    } catch (error) {
-        logger.error(`Error during worker shutdown: ${error.message}`);
-        process.exit(1);
-    }
+  try {
+    await emailWorker.close();
+    logger.info('Email worker closed successfully');
+    process.exit(0);
+  } catch (error) {
+    logger.error(`Error during worker shutdown: ${error.message}`);
+    process.exit(1);
+  }
 }
 
 process.on('SIGTERM', gracefulShutdown);
@@ -396,18 +401,18 @@ process.on('SIGINT', gracefulShutdown);
 
 // Log worker startup
 logger.info('🚀 Email worker started', {
-    concurrency: 5,
-    queueName: 'email',
-    redisHost: process.env.REDIS_HOST || '127.0.0.1',
-    redisPort: process.env.REDIS_PORT || 6379,
+  concurrency: 5,
+  queueName: 'email',
+  redisHost: process.env.REDIS_HOST || '127.0.0.1',
+  redisPort: process.env.REDIS_PORT || 6379,
 });
 
 // Keep the process running
 process.on('unhandledRejection', (reason, promise) => {
-    logger.error('Unhandled Rejection at:', {
-        promise,
-        reason,
-    });
+  logger.error('Unhandled Rejection at:', {
+    promise,
+    reason,
+  });
 });
 
 module.exports = emailWorker;

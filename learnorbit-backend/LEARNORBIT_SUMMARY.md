@@ -124,7 +124,7 @@ router.get('/dashboard', protect, authorizeRoles('admin', 'instructor'), handler
 
 ### **Step 1: Backup Database**
 ```bash
-mysqldump -u root -p cyberorbit365 > backup_$(date +%Y%m%d).sql
+mysqldump -u root -p learnorbit > backup_$(date +%Y%m%d).sql
 ```
 
 ### **Step 2: Generate Password Hash**
@@ -134,7 +134,7 @@ node scripts/generate-hash.js "Admin@123"
 
 ### **Step 3: Run Migration**
 ```bash
-mysql -u root -p cyberorbit365 < database/schema/users.sql
+mysql -u root -p learnorbit < database/schema/users.sql
 ```
 
 ### **Step 4: Update Admin Password**

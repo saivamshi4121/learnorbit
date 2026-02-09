@@ -1,4 +1,4 @@
-# CyberOrbit365 Backend
+# LearnOrbit Backend
 
 A secure, scalable Node.js backend with Redis-powered distributed rate limiting and caching.
 
@@ -24,7 +24,7 @@ A secure, scalable Node.js backend with Redis-powered distributed rate limiting 
 ### 1. Clone and Install Dependencies
 
 ```bash
-cd cyberorbit365-backend
+cd learnorbit-backend
 npm install
 ```
 
@@ -35,14 +35,14 @@ Create a `.env` file:
 ```env
 PORT=65000
 NODE_ENV=production
-FRONTEND_URL=https://app.cyberorbit365.com
+FRONTEND_URL=https://app.learnorbit.com
 
 # Database
 DB_HOST=localhost
 DB_PORT=3306
 DB_USER=root
 DB_PASSWORD=system
-DB_NAME=cyberorbit365
+DB_NAME=learnorbit
 
 # Redis
 REDIS_HOST=127.0.0.1
@@ -120,7 +120,7 @@ Response:
 ```json
 {
   "success": true,
-  "message": "CyberOrbit365 Backend Running Securely"
+  "message": "LearnOrbit Backend Running Securely"
 }
 ```
 
@@ -350,7 +350,7 @@ ISC
 
 ## 👨‍💻 Author
 
-CyberOrbit365 Team
+LearnOrbit Team
 
 ---
 

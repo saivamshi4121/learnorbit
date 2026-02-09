@@ -9,7 +9,7 @@ node scripts/generate-hash.js "YourPassword123"
 
 ### 2. Run Database Migration
 ```bash
-mysql -u root -p cyberorbit365 < database/schema/users.sql
+mysql -u root -p learnorbit < database/schema/users.sql
 ```
 
 ### 3. Update Admin Password
@@ -351,7 +351,7 @@ DB_HOST=localhost
 DB_PORT=3306
 DB_USER=root
 DB_PASSWORD=system
-DB_NAME=cyberorbit365
+DB_NAME=learnorbit
 
 # Server
 PORT=65000

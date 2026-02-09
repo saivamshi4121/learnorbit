@@ -94,12 +94,12 @@ src/middlewares/rbac.middleware.js           (NEW)
 
 ### **Step 1: Backup Current Database**
 ```bash
-mysqldump -u root -p cyberorbit365 > backup_$(date +%Y%m%d).sql
+mysqldump -u root -p learnorbit > backup_$(date +%Y%m%d).sql
 ```
 
 ### **Step 2: Run Migration**
 ```bash
-mysql -u root -p cyberorbit365 < database/schema/users.sql
+mysql -u root -p learnorbit < database/schema/users.sql
 ```
 
 ### **Step 3: Generate Admin Password Hash**
