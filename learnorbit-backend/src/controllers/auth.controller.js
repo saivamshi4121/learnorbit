@@ -99,7 +99,7 @@ exports.login = async (req, res, next) => {
     const ip = req.ip;
     const userAgent = req.get('User-Agent') || '';
 
-    const { accessToken, refreshToken } = await AuthService.login({
+    const { accessToken, refreshToken, user } = await AuthService.login({
       email,
       password,
       ip,
@@ -123,7 +123,7 @@ exports.login = async (req, res, next) => {
     res.json({
       success: true,
       message: 'Login successful',
-      data: { accessToken },
+      data: { accessToken, user },
     });
   } catch (err) {
     if (err.message && err.message.includes('locked')) {

@@ -57,6 +57,18 @@ class CourseRepository {
     const [result] = await pool.execute(sql, [id]);
     return result.affectedRows;
   }
+
+  async findByInstructor(instructorId) {
+    const sql = `
+      SELECT c.*, 
+        (SELECT COUNT(*) FROM enrollments e WHERE e.course_id = c.id) as enrollment_count
+      FROM courses c 
+      WHERE c.instructor_id = ?
+      ORDER BY c.created_at DESC
+    `;
+    const [rows] = await pool.execute(sql, [instructorId]);
+    return rows;
+  }
 }
 
 module.exports = new CourseRepository();

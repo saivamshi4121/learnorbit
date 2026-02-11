@@ -2,6 +2,120 @@ const enrollmentRepo = require('../enrollments/enrollment.repository');
 const courseRepo = require('../courses/course.repository');
 const logger = require('../../utils/logger');
 
+// GET /api/v1/instructor/courses
+exports.getInstructorCourses = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const courses = await courseRepo.findByInstructor(userId);
+    res.json({ success: true, data: courses });
+  } catch (err) {
+    logger.error('Error fetching instructor courses', err);
+    res.status(500).json({ success: false, error: 'Internal Server Error' });
+  }
+};
+
+// GET /api/v1/instructor/stats
+exports.getInstructorStats = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const courses = await courseRepo.findByInstructor(userId);
+
+    const stats = {
+      totalCourses: courses.length,
+      publishedCourses: courses.filter(c => c.is_published).length,
+      draftCourses: courses.filter(c => !c.is_published).length,
+      totalStudents: courses.reduce((acc, curr) => acc + (curr.enrollment_count || 0), 0)
+    };
+
+    res.json({ success: true, data: stats });
+  } catch (err) {
+    logger.error('Error fetching instructor stats', err);
+    res.status(500).json({ success: false, error: 'Internal Server Error' });
+  }
+};
+
+// POST /api/v1/instructor/courses
+exports.createCourse = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { title, description, thumbnail_url } = req.body;
+
+    if (!title) {
+      return res.status(400).json({ success: false, error: 'Title is required' });
+    }
+
+    const courseId = await courseRepo.create({
+      instructor_id: userId,
+      title,
+      description,
+      thumbnail_url,
+      is_published: false // Draft by default
+    });
+
+    res.status(201).json({ success: true, data: { id: courseId }, message: 'Course created successfully' });
+  } catch (err) {
+    logger.error('Error creating course', err);
+    res.status(500).json({ success: false, error: 'Internal Server Error' });
+  }
+};
+
+// GET /api/v1/instructor/courses/:id
+exports.getCourse = async (req, res) => {
+  try {
+    const courseId = parseInt(req.params.id, 10);
+    const userId = req.user.id;
+
+    if (isNaN(courseId)) {
+      return res.status(400).json({ success: false, error: 'Invalid course ID' });
+    }
+
+    const course = await courseRepo.findAnyById(courseId);
+
+    if (!course) {
+      return res.status(404).json({ success: false, error: 'Course not found' });
+    }
+
+    // Verify ownership
+    if (course.instructor_id !== userId && req.user.role !== 'admin') {
+      return res.status(403).json({ success: false, error: 'Forbidden: Not your course' });
+    }
+
+    res.json({ success: true, data: course });
+  } catch (err) {
+    logger.error('Error fetching course', err);
+    res.status(500).json({ success: false, error: 'Internal Server Error' });
+  }
+};
+
+// PATCH /api/v1/instructor/courses/:id
+exports.updateCourse = async (req, res) => {
+  try {
+    const courseId = parseInt(req.params.id, 10);
+    const updates = req.body;
+    const userId = req.user.id;
+
+    if (isNaN(courseId)) {
+      return res.status(400).json({ success: false, error: 'Invalid course ID' });
+    }
+
+    const course = await courseRepo.findAnyById(courseId);
+    if (!course) {
+      return res.status(404).json({ success: false, error: 'Course not found' });
+    }
+
+    // Verify ownership
+    if (course.instructor_id !== userId && req.user.role !== 'admin') {
+      return res.status(403).json({ success: false, error: 'Forbidden: Not your course' });
+    }
+
+    await courseRepo.update(courseId, updates);
+    res.json({ success: true, message: 'Course updated successfully' });
+  } catch (err) {
+    logger.error('Error updating course', err);
+    res.status(500).json({ success: false, error: 'Internal Server Error' });
+  }
+};
+
 // GET /api/v1/instructor/courses/:id/enrollments
 exports.getCourseEnrollments = async (req, res) => {
   try {

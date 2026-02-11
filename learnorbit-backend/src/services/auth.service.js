@@ -240,7 +240,11 @@ class AuthService {
         ip,
       });
 
-      return { accessToken, refreshToken };
+      // Return user data (excluding sensitive fields)
+      const userResponse = { ...user };
+      delete userResponse.password;
+
+      return { accessToken, refreshToken, user: userResponse };
     } catch (error) {
       logger.error(`Login failed: ${error.message}`, {
         email,

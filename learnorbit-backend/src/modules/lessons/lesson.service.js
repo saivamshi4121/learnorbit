@@ -7,7 +7,7 @@ const logger = require('../../utils/logger');
 class LessonService {
   // Helper to ensure instructor owns the course
   async _ensureInstructorOwnsCourse(instructorId, courseId) {
-    const course = await courseRepo.findById(courseId);
+    const course = await courseRepo.findAnyById(courseId);
     if (!course) throw { status: 404, message: 'Course not found' };
     if (course.instructor_id !== instructorId) {
       throw { status: 403, message: 'Not authorized to modify this course' };
@@ -111,30 +111,7 @@ class LessonService {
     return { message: 'Lesson updated' };
   }
 
-    await this._ensureInstructorOwnsCourse(instructorId, courseId);
-    // Validate required fields
-    if (!payload.title || !payload.type) {
-      throw { status: 400, message: 'Title and type are required' };
-    }
-    const lesson = {
-      course_id: parseInt(courseId, 10),
-      title: payload.title,
-      type: payload.type, // should be one of enum values, assume validated elsewhere
-      content: payload.content || null,
-      order_index: payload.order_index !== undefined ? payload.order_index : 0,
-    };
-    const id = await lessonRepo.create(lesson);
-    return { id };
-  }
 
-  // Update lesson (instructor only, verify ownership via lesson's course)
-  async update(instructorId, lessonId, payload) {
-    const lesson = await lessonRepo.findById(lessonId);
-    if (!lesson) throw { status: 404, message: 'Lesson not found' };
-    await this._ensureInstructorOwnsCourse(instructorId, lesson.course_id);
-    await lessonRepo.update(lessonId, payload);
-    return { message: 'Lesson updated' };
-  }
 
   // Delete lesson (instructor only)
   async delete(instructorId, lessonId) {

@@ -13,6 +13,8 @@ const dashboardRoutes = require('./modules/dashboard/dashboard.routes');
 const courseRoutes = require('./modules/courses/course.routes');
 const enrollmentRoutes = require('./modules/enrollments/enrollment.routes');
 const progressRoutes = require('./modules/progress/progress.routes');
+const instructorRoutes = require('./modules/instructor/instructor.routes');
+const lessonRoutes = require('./modules/lessons/lesson.routes');
 const authRoutes = require('./routes/auth.routes');
 const contactRoutes = require('./routes/contact.routes');
 
@@ -56,6 +58,8 @@ app.use('/api', enrollmentRoutes);
 app.use('/api', progressRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/v1/dashboard', dashboardRoutes);
+app.use('/api/v1/instructor', instructorRoutes);
+app.use(lessonRoutes);
 
 // 404 handler
 app.use((req, res) => {

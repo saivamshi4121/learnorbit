@@ -38,9 +38,11 @@ export const setRefreshToken = (token: string): void => {
 };
 
 // Set both tokens at once (typically after login)
-export const setTokens = (accessToken: string, refreshToken: string): void => {
+export const setTokens = (accessToken: string, refreshToken?: string): void => {
     setAccessToken(accessToken);
-    setRefreshToken(refreshToken);
+    if (refreshToken) {
+        setRefreshToken(refreshToken);
+    }
 };
 
 // Clear all tokens (typically on logout)

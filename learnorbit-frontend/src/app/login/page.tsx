@@ -22,18 +22,20 @@ export default function LoginPage() {
         setError("");
 
         try {
-            const data = await post<any>('/auth/login', { email, password });
+            const response = await post<any>('/auth/login', { email, password });
+            const { accessToken, user } = response.data;
 
             // Store tokens and user data
-            setTokens(data.accessToken, data.refreshToken);
-            setCurrentUser(data.user);
+            // Refresh token is now httpOnly cookie
+            setTokens(accessToken);
+            setCurrentUser(user);
 
             toast.success("Login successful");
 
             // Redirect based on role
-            if (data.user.role === 'instructor') {
+            if (user.role === 'instructor') {
                 router.push('/instructor');
-            } else if (data.user.role === 'admin') {
+            } else if (user.role === 'admin') {
                 router.push('/admin');
             } else {
                 router.push('/student');
