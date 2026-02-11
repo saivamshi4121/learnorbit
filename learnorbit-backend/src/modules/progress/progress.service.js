@@ -5,67 +5,87 @@ const enrollmentRepo = require('../enrollments/enrollment.repository');
 const logger = require('../../utils/logger');
 
 class ProgressService {
-  // Helper to check enrollment status
-  async _ensureApprovedEnrollment(studentId, courseId) {
-    const status = await enrollmentRepo.getStatus(studentId, courseId);
-    if (!status) {
-      throw { status: 403, message: 'Student not enrolled in this course' };
-    }
-    if (status !== 'approved') {
-      throw { status: 403, message: 'Enrollment not approved' };
-    }
-    return true;
-  }
-
-  // Mark or update progress for a lesson
-  async markProgress(studentId, lessonId, { watch_percentage, completed }) {
-    // Validate watch_percentage
-    if (typeof watch_percentage !== 'number' || watch_percentage < 0 || watch_percentage > 100) {
+  /**
+   * Mark progress for a lesson
+   * @param {number} userId 
+   * @param {number} lessonId 
+   * @param {number} watchPercentage 
+   */
+  async markProgress(userId, lessonId, watchPercentage) {
+    if (typeof watchPercentage !== 'number' || watchPercentage < 0 || watchPercentage > 100) {
       throw { status: 400, message: 'watch_percentage must be a number between 0 and 100' };
     }
-    if (typeof completed !== 'boolean') {
-      throw { status: 400, message: 'completed must be a boolean' };
-    }
-    // Verify lesson exists and get its course
+
+    const completed = watchPercentage >= 90;
+
+    // Ensure lesson exists
     const lesson = await lessonRepo.findById(lessonId);
     if (!lesson) {
       throw { status: 404, message: 'Lesson not found' };
     }
-    // Verify enrollment approval for the course
-    await this._ensureApprovedEnrollment(studentId, lesson.course_id);
-    // Upsert progress record
-    await progressRepo.upsert(studentId, lessonId, completed, watch_percentage);
-    return { message: 'Progress saved' };
+
+    // Ensure enrollment
+    const enrollmentStatus = await enrollmentRepo.getStatus(userId, lesson.course_id);
+    if (enrollmentStatus !== 'active') {
+      throw { status: 403, message: 'Access denied: Active enrollment required' };
+    }
+
+    await progressRepo.upsert(userId, lessonId, completed, watchPercentage);
+
+    return {
+      success: true,
+      completed,
+      watchPercentage
+    };
   }
 
-  // Get aggregated progress for a course
-  async getCourseProgress(studentId, courseId) {
-    // Verify enrollment
-    await this._ensureApprovedEnrollment(studentId, courseId);
-    // Total lessons count
-    const lessons = await lessonRepo.findByCourseOrdered(courseId);
+  /**
+   * Get course progress summary
+   * @param {number} userId 
+   * @param {number} courseId 
+   */
+  async getCourseProgress(userId, courseId) {
+    // Return: { completedLessons: [ids], percentage: number, resumeLessonId: number }
+
+    // 1. Get all lessons with progress
+    const lessons = await progressRepo.getCourseProgress(userId, courseId);
+
+    if (!lessons.length) {
+      return {
+        completedLessons: [],
+        percentage: 0,
+        resumeLessonId: null
+      };
+    }
+
     const totalLessons = lessons.length;
-    // Fetch progress rows joined with lessons
-    const rows = await progressRepo.getCourseProgress(studentId, courseId);
-    let completedLessons = 0;
-    let latestUpdatedAt = null;
+    const completedLessonIds = [];
     let resumeLessonId = null;
-    rows.forEach(row => {
-      if (row.completed) completedLessons++;
-      if (row.updated_at) {
-        const updated = new Date(row.updated_at);
-        if (!latestUpdatedAt || updated > latestUpdatedAt) {
-          latestUpdatedAt = updated;
-          resumeLessonId = row.lesson_id;
-        }
+
+    // 2. Aggregate data
+    lessons.forEach(lesson => {
+      if (lesson.completed) {
+        completedLessonIds.push(lesson.lesson_id);
       }
     });
-    const completionPercentage = totalLessons === 0 ? 0 : Math.round((completedLessons / totalLessons) * 100);
+
+    // 3. Find resume lesson (first incomplete)
+    // Lessons are ordered by order_index
+    const firstIncomplete = lessons.find(l => !l.completed);
+
+    if (firstIncomplete) {
+      resumeLessonId = firstIncomplete.lesson_id;
+    } else {
+      // All complete -> last lesson
+      resumeLessonId = lessons[lessons.length - 1].lesson_id;
+    }
+
+    const percentage = Math.round((completedLessonIds.length / totalLessons) * 100);
+
     return {
-      totalLessons,
-      completedLessons,
-      completionPercentage,
-      resumeLessonId,
+      completedLessons: completedLessonIds,
+      percentage,
+      resumeLessonId
     };
   }
 }

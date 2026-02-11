@@ -2,34 +2,48 @@
 const progressService = require('./progress.service');
 const logger = require('../../utils/logger');
 
-// Standard response helper
-function sendResponse(res, statusCode, data, message = null) {
-  const payload = { success: true, data };
-  if (message) payload.message = message;
-  res.status(statusCode).json(payload);
-}
+exports.markProgress = async (req, res) => {
+  try {
+    const lessonId = parseInt(req.params.id, 10);
+    const userId = req.user.id;
+    const { watch_percentage } = req.body;
 
-function asyncHandler(fn) {
-  return (req, res, next) => {
-    Promise.resolve(fn(req, res, next)).catch(next);
-  };
-}
+    if (!lessonId || isNaN(lessonId)) {
+      return res.status(400).json({ success: false, error: 'Invalid lesson ID' });
+    }
 
-// POST /api/v1/lessons/:lessonId/progress
-exports.markProgress = asyncHandler(async (req, res) => {
-  const studentId = req.user.id; // set by protect middleware
-  const lessonId = parseInt(req.params.lessonId, 10);
-  const { watch_percentage, completed } = req.body;
-  const result = await progressService.markProgress(studentId, lessonId, { watch_percentage, completed });
-  sendResponse(res, 200, result, 'Progress recorded');
-});
+    const result = await progressService.markProgress(userId, lessonId, watch_percentage);
 
-// GET /api/v1/courses/:courseId/progress
-exports.getCourseProgress = asyncHandler(async (req, res) => {
-  const studentId = req.user.id;
-  const courseId = parseInt(req.params.courseId, 10);
-  const data = await progressService.getCourseProgress(studentId, courseId);
-  sendResponse(res, 200, data);
-});
+    res.status(200).json({
+      success: true,
+      data: result,
+    });
+  } catch (error) {
+    logger.error('Progress update error', error);
+    if (error.status) {
+      return res.status(error.status).json({ success: false, error: error.message });
+    }
+    res.status(500).json({ success: false, error: 'Internal Server Error' });
+  }
+};
 
-module.exports = exports;
+exports.getCourseProgress = async (req, res) => {
+  try {
+    const courseId = parseInt(req.params.id, 10);
+    const userId = req.user.id;
+
+    if (!courseId || isNaN(courseId)) {
+      return res.status(400).json({ success: false, error: 'Invalid course ID' });
+    }
+
+    const data = await progressService.getCourseProgress(userId, courseId);
+
+    res.status(200).json({
+      success: true,
+      data,
+    });
+  } catch (error) {
+    logger.error('Get course progress error', error);
+    res.status(500).json({ success: false, error: 'Internal Server Error' });
+  }
+};

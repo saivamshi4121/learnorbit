@@ -1,48 +1,123 @@
 // src/modules/enrollments/enrollment.controller.js
 const enrollmentService = require('./enrollment.service');
+const logger = require('../../utils/logger');
 
-function sendResponse(res, statusCode, data, message = null) {
-  const payload = { success: true, data };
-  if (message) payload.message = message;
-  res.status(statusCode).json(payload);
-}
+exports.enroll = async (req, res) => {
+  try {
+    const { courseId } = req.body;
+    const userId = req.user.id;
 
-function asyncHandler(fn) {
-  return (req, res, next) => {
-    Promise.resolve(fn(req, res, next)).catch(next);
-  };
-}
+    if (!courseId) {
+      return res.status(400).json({ success: false, error: 'Course ID is required' });
+    }
 
-// POST /courses/:id/enroll – student enrolls in a course
-exports.enroll = asyncHandler(async (req, res) => {
-  const studentId = req.user.id; // set by protect middleware
-  const courseId = parseInt(req.params.id, 10);
-  const result = await enrollmentService.enroll(studentId, courseId);
-  sendResponse(res, 201, result, 'Enrolled successfully');
-});
+    const result = await enrollmentService.enroll(userId, courseId);
 
-// GET /api/v1/admin/enrollments?status=pending – list pending enrollments (admin/instructor)
-exports.listPending = asyncHandler(async (req, res) => {
-  const enrollments = await enrollmentService.listPending(req.user);
-  sendResponse(res, 200, enrollments, 'Pending enrollments retrieved');
-});
+    res.status(201).json({
+      success: true,
+      data: result,
+    });
+  } catch (error) {
+    logger.error('Enrollment error', error);
+    if (error.status) {
+      return res.status(error.status).json({ success: false, error: error.message });
+    }
+    res.status(500).json({ success: false, error: 'Internal Server Error' });
+  }
+};
 
-// PATCH /api/v1/admin/enrollments/:id/approve – approve enrollment
-exports.approve = asyncHandler(async (req, res) => {
-  const enrollmentId = parseInt(req.params.id, 10);
-  const result = await enrollmentService.approve(enrollmentId, req.user);
-  sendResponse(res, 200, result, 'Enrollment approved');
-});
+exports.checkStatus = async (req, res) => {
+  try {
+    const courseId = parseInt(req.params.courseId, 10);
+    const userId = req.user.id;
 
-// PATCH /api/v1/admin/enrollments/:id/reject – reject enrollment
-exports.reject = asyncHandler(async (req, res) => {
-  const enrollmentId = parseInt(req.params.id, 10);
-  const result = await enrollmentService.reject(enrollmentId, req.user);
-  sendResponse(res, 200, result, 'Enrollment rejected');
-});
+    if (!courseId || isNaN(courseId)) {
+      return res.status(400).json({ success: false, error: 'Invalid Course ID' });
+    }
 
-exports.getMyEnrollments = asyncHandler(async (req, res) => {
-  const studentId = req.user.id;
-  const enrollments = await enrollmentService.listByStudent(studentId);
-  sendResponse(res, 200, enrollments, 'Enrollments retrieved');
-});
+    const status = await enrollmentService.getStatus(userId, courseId);
+
+    res.status(200).json({
+      success: true,
+      status, // 'active', 'pending', or null
+    });
+  } catch (error) {
+    logger.error('Check status error', error);
+    res.status(500).json({ success: false, error: 'Internal Server Error' });
+  }
+};
+
+// Instructor: Get enrollments for a course
+exports.getCourseEnrollments = async (req, res) => {
+  try {
+    const courseId = parseInt(req.params.id, 10);
+    const userId = req.user.id;
+    const userRole = req.user.role;
+
+    if (!courseId || isNaN(courseId)) {
+      return res.status(400).json({ success: false, error: 'Invalid Course ID' });
+    }
+
+    const enrollments = await enrollmentService.getCourseEnrollments(userId, userRole, courseId);
+
+    res.status(200).json({
+      success: true,
+      data: enrollments,
+    });
+  } catch (error) {
+    logger.error('Get course enrollments error', error);
+    if (error.status) return res.status(error.status).json({ success: false, error: error.message });
+    res.status(500).json({ success: false, error: 'Internal Server Error' });
+  }
+};
+
+// Instructor: Approve enrollment
+exports.approve = async (req, res) => {
+  try {
+    const enrollmentId = parseInt(req.params.id, 10);
+    const userId = req.user.id;
+    const userRole = req.user.role;
+
+    const result = await enrollmentService.approveEnrollment(userId, userRole, enrollmentId);
+
+    res.status(200).json(result);
+  } catch (error) {
+    logger.error('Approve enrollment error', error);
+    if (error.status) return res.status(error.status).json({ success: false, error: error.message });
+    res.status(500).json({ success: false, error: 'Internal Server Error' });
+  }
+};
+
+// Instructor: Reject enrollment
+exports.reject = async (req, res) => {
+  try {
+    const enrollmentId = parseInt(req.params.id, 10);
+    const userId = req.user.id;
+    const userRole = req.user.role;
+
+    const result = await enrollmentService.rejectEnrollment(userId, userRole, enrollmentId);
+
+    res.status(200).json(result);
+  } catch (error) {
+    logger.error('Reject enrollment error', error);
+    if (error.status) return res.status(error.status).json({ success: false, error: error.message });
+    res.status(500).json({ success: false, error: 'Internal Server Error' });
+  }
+};
+
+// Instructor: Remove enrollment
+exports.remove = async (req, res) => {
+  try {
+    const enrollmentId = parseInt(req.params.id, 10);
+    const userId = req.user.id;
+    const userRole = req.user.role;
+
+    const result = await enrollmentService.removeEnrollment(userId, userRole, enrollmentId);
+
+    res.status(200).json(result);
+  } catch (error) {
+    logger.error('Remove enrollment error', error);
+    if (error.status) return res.status(error.status).json({ success: false, error: error.message });
+    res.status(500).json({ success: false, error: 'Internal Server Error' });
+  }
+};

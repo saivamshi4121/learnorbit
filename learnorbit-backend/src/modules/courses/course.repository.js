@@ -19,6 +19,12 @@ class CourseRepository {
     return rows[0] || null;
   }
 
+  async findAnyById(id) {
+    const sql = `SELECT * FROM courses WHERE id = ?`;
+    const [rows] = await pool.execute(sql, [id]);
+    return rows[0] || null;
+  }
+
   async findAllPublished() {
     const sql = `SELECT id, title, description, thumbnail_url FROM courses WHERE is_published = TRUE`;
     const [rows] = await pool.execute(sql);

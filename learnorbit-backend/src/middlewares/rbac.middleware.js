@@ -1,6 +1,7 @@
 // src/middlewares/rbac.middleware.js
 const jwt = require('jsonwebtoken');
 const logger = require('../utils/logger');
+const enrollmentRepo = require('../modules/enrollments/enrollment.repository');
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -289,11 +290,111 @@ exports.hasPermission = (permission) => (req, res, next) => {
 };
 
 /**
+ * Ensure enrolled middleware - Check if user has active enrollment in a course
+ * Must be used after protect middleware
+ * Admin bypass is allowed
+ *
+ * Usage: router.get('/courses/:courseId/lessons', protect, ensureEnrolled, handler)
+ *
+ * @param {Object} options - Options for the middleware
+ * @param {string} options.paramName - Name of the route parameter containing course ID (default: 'courseId')
+ * @param {boolean} options.allowAdmin - Whether to allow admin bypass (default: true)
+ */
+exports.ensureEnrolled = (options = {}) => {
+    const { paramName = 'courseId', allowAdmin = true } = options;
+
+    return async (req, res, next) => {
+        try {
+            // Check if user is authenticated
+            if (!req.user) {
+                return res.status(401).json({
+                    success: false,
+                    error: 'User not authenticated',
+                    message: 'Please log in to access this resource',
+                });
+            }
+
+            // Admin bypass
+            if (allowAdmin && req.user.role === 'admin') {
+                logger.debug(`Admin bypass for enrollment check`, {
+                    userId: req.user.id,
+                    path: req.path,
+                });
+                return next();
+            }
+
+            // Get course ID from route params
+            const courseId = parseInt(req.params[paramName], 10);
+
+            if (!courseId || isNaN(courseId)) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'Invalid course ID',
+                    message: 'Course ID is required and must be a valid number',
+                });
+            }
+
+            // Check enrollment status
+            const status = await enrollmentRepo.getStatus(req.user.id, courseId);
+
+            if (!status) {
+                logger.warn(`Access denied - not enrolled`, {
+                    userId: req.user.id,
+                    courseId,
+                    path: req.path,
+                });
+                return res.status(403).json({
+                    success: false,
+                    error: 'Forbidden',
+                    message: 'You must be enrolled in this course to access its content',
+                    action: 'enroll',
+                });
+            }
+
+            if (status !== 'active') {
+                logger.warn(`Access denied - enrollment not approved`, {
+                    userId: req.user.id,
+                    courseId,
+                    status,
+                    path: req.path,
+                });
+                return res.status(403).json({
+                    success: false,
+                    error: 'Forbidden',
+                    message: 'Your enrollment is pending approval. Please wait for admin confirmation.',
+                    status,
+                });
+            }
+
+            // User is enrolled and approved
+            logger.debug(`Enrollment verified`, {
+                userId: req.user.id,
+                courseId,
+                path: req.path,
+            });
+
+            next();
+        } catch (error) {
+            logger.error(`Enrollment check error: ${error.message}`, {
+                error: error.stack,
+                userId: req.user?.id,
+                path: req.path,
+            });
+            return res.status(500).json({
+                success: false,
+                error: 'Internal Server Error',
+                message: 'Failed to verify enrollment status',
+            });
+        }
+    };
+};
+
+/**
  * Rate limit by role
  * Different rate limits for different roles
- * 
+ *
  * Usage: router.post('/api-call', protect, rateLimitByRole({ student: 10, instructor: 50, admin: 1000 }), handler)
- * 
+ *
  * @param {Object} limits - Rate limits per role (requests per minute)
  */
 exports.rateLimitByRole = (limits) => {
