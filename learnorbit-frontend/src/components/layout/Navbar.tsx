@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
     Menu,
     X,
@@ -34,35 +35,29 @@ export function Navbar() {
         { name: "Courses", href: "/courses" },
         { name: "Mentorship", href: "/mentorship" },
         { name: "Pricing", href: "/pricing" },
-        { name: "Contact", href: "/contact" },
+        { name: "Contact", href: "/contact#contact-form" },
     ];
 
     return (
         <nav
-            className={`fixed top-[40px] left-0 right-0 z-50 transition-all duration-300 border-b ${scrolled
-                ? "bg-white/80 backdrop-blur-md border-gray-100 shadow-sm py-3"
-                : "bg-white/0 border-transparent py-5"
+            className={`fixed top-[40px] left-0 right-0 z-50 h-18 transition-all duration-300 border-b ${scrolled
+                ? "bg-white/80 backdrop-blur-md border-gray-100 shadow-sm"
+                : "bg-white/0 border-transparent"
                 }`}
         >
-            <div className="max-w-7xl mx-auto px-6 lg:px-8">
-                <div className="flex items-center justify-between">
+            <div className="max-w-7xl mx-auto px-6 lg:px-8 h-full">
+                <div className="flex items-center justify-between h-full py-2">
 
                     {/* Logo Area */}
-                    <Link href="/" className="flex items-center gap-2 group">
-                        <div className="relative">
-                            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:shadow-blue-500/30 transition-all duration-300 group-hover:scale-105">
-                                <BookOpen className="h-5 w-5 text-white" />
-                            </div>
-                            <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white ring-1 ring-green-500/20 animate-pulse" />
-                        </div>
-                        <div className="flex flex-col">
-                            <span className="text-xl font-bold text-slate-900 tracking-tight leading-none group-hover:text-blue-600 transition-colors">
-                                LearnOrbit
-                            </span>
-                            <span className="text-[10px] font-medium text-slate-500 uppercase tracking-wider leading-none mt-1">
-                                Pro Learning
-                            </span>
-                        </div>
+                    <Link href="/" className="flex items-center group h-full">
+                        <Image
+                            src="/learnorbit.png"
+                            alt="LearnOrbit"
+                            width={220}
+                            height={62}
+                            className="max-h-full w-auto object-contain group-hover:opacity-90 transition-opacity"
+                            priority
+                        />
                     </Link>
 
                     {/* Desktop Navigation */}

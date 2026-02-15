@@ -52,8 +52,8 @@ class CourseRepository {
   }
 
   async delete(id) {
-    // Soft delete – mark as unpublished
-    const sql = `UPDATE courses SET is_published = FALSE WHERE id = ?`;
+    // Hard delete
+    const sql = `DELETE FROM courses WHERE id = ?`;
     const [result] = await pool.execute(sql, [id]);
     return result.affectedRows;
   }

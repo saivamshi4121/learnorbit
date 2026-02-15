@@ -3,7 +3,7 @@
  * API calls for instructor dashboard
  */
 
-import { get, patch, post, put } from '../api';
+import { get, patch, post, put, del } from '../api';
 import { InstructorCoursesResponse, InstructorStatsResponse, InstructorCourse } from '@/types/instructor';
 
 /**
@@ -46,4 +46,28 @@ export const updateCourse = async (courseId: number, data: Partial<InstructorCou
  */
 export const toggleCoursePublish = async (courseId: number, isPublished: boolean) => {
     return patch(`/v1/instructor/courses/${courseId}`, { is_published: isPublished });
+};
+
+/**
+ * Delete a course
+ */
+export const deleteCourse = async (courseId: number) => {
+    return del<{ success: boolean }>(`/v1/instructor/courses/${courseId}`);
+};
+
+
+/**
+ * Upload a file and get the URL
+ */
+/**
+ * Upload a file and get the URL
+ */
+export const uploadFile = async (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    return post<{ success: boolean; url: string }>("/upload", formData, {
+        headers: {
+            "Content-Type": "multipart/form-data",
+        },
+    });
 };

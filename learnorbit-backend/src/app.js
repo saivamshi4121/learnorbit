@@ -4,6 +4,7 @@ const helmet = require('helmet');
 const cors = require('cors');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
+const path = require('path');
 
 const requestIdMiddleware = require('./middlewares/requestId.middleware');
 const logger = require('./utils/logger');
@@ -14,9 +15,11 @@ const courseRoutes = require('./modules/courses/course.routes');
 const enrollmentRoutes = require('./modules/enrollments/enrollment.routes');
 const progressRoutes = require('./modules/progress/progress.routes');
 const instructorRoutes = require('./modules/instructor/instructor.routes');
+const adminRoutes = require('./modules/admin/admin.routes');
 const lessonRoutes = require('./modules/lessons/lesson.routes');
 const authRoutes = require('./routes/auth.routes');
 const contactRoutes = require('./routes/contact.routes');
+const uploadRoutes = require('./modules/upload/upload.routes');
 
 const app = express();
 
@@ -24,7 +27,9 @@ const app = express();
 app.use(requestIdMiddleware);
 
 // Security headers
-app.use(helmet());
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" } // implementation for serving static images to frontend
+}));
 
 // CORS configuration – origin from .env or fallback to '*'
 const corsOptions = {
@@ -47,19 +52,25 @@ app.use(morgan('combined', {
 // Distributed rate limiting via Redis
 app.use(redisRateLimiter);
 
+// Serve uploads directory specifically
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ success: true, message: 'LearnOrbit Backend Running Securely' });
 });
 
 // Mount feature routes
+app.use('/api', uploadRoutes); // mounts at /api/upload
 app.use('/api/courses', courseRoutes);
 app.use('/api', enrollmentRoutes);
 app.use('/api', progressRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/v1/dashboard', dashboardRoutes);
 app.use('/api/v1/instructor', instructorRoutes);
+app.use('/api/v1/admin', adminRoutes);
 app.use(lessonRoutes);
+app.use('/api/contact', contactRoutes);
 
 // 404 handler
 app.use((req, res) => {

@@ -6,9 +6,11 @@ import Image from 'next/image';
 import { formatDistanceToNow } from 'date-fns';
 import {
     ArrowUpDown, ArrowUp, ArrowDown,
-    BookOpen, CheckCircle, File, Users, TrendingUp
+    BookOpen, CheckCircle, File, Users, TrendingUp, LogOut
 } from 'lucide-react';
 
+import { Button } from "@/components/ui/button";
+import { logout } from "@/lib/auth";
 import { PrimaryButton } from '@/components/ui/PrimaryButton';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -111,7 +113,11 @@ export default function InstructorDashboard() {
                             Manage courses and track engagement.
                         </p>
                     </div>
-                    <div>
+                    <div className="flex items-center gap-3">
+                        <Button onClick={() => logout()} variant="outline" className="gap-2">
+                            <LogOut className="h-4 w-4" />
+                            Logout
+                        </Button>
                         <PrimaryButton onClick={handleCreateCourse} className="bg-primary hover:bg-primary/90 text-white shadow-sm px-5 py-2">
                             Create Course
                         </PrimaryButton>

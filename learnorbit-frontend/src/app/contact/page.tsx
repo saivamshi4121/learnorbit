@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { Navbar } from "@/components/layout/Navbar";
 import { MarqueeBanner } from "@/components/ui/MarqueeBanner";
+import { PhoneMockup } from "@/components/ui/PhoneMockup";
 
 export default function ContactPage() {
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -72,23 +73,33 @@ export default function ContactPage() {
             {/* Main Content */}
             <main className="pt-32 pb-20 px-6 lg:px-8 max-w-7xl mx-auto">
 
-                {/* Header Section */}
-                <div className="max-w-3xl mx-auto text-center mb-16 space-y-4">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-sm font-medium">
-                        <MessageSquare className="w-4 h-4" />
-                        Let's chat
+                {/* Header Section with Phone Mockup */}
+                <div className="max-w-6xl mx-auto mb-20">
+                    <div className="grid lg:grid-cols-2 gap-12 items-center">
+                        {/* Left: Text Content */}
+                        <div className="space-y-6 text-center lg:text-left">
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-sm font-medium">
+                                <MessageSquare className="w-4 h-4" />
+                                Let's chat
+                            </div>
+                            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-slate-900">
+                                Get in touch with our team
+                            </h1>
+                            <p className="text-lg text-slate-600 max-w-xl mx-auto lg:mx-0">
+                                We'd love to hear from you. Whether you have a question about features, pricing, or need a demo, our team is ready to answer all your questions.
+                            </p>
+                        </div>
+
+                        {/* Right: Phone Mockup */}
+                        <div className="flex justify-center lg:justify-end">
+                            <PhoneMockup />
+                        </div>
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-slate-900">
-                        Get in touch with our team
-                    </h1>
-                    <p className="text-lg text-slate-600">
-                        We'd love to hear from you. Whether you have a question about features, pricing, or need a demo, our team is ready to answer all your questions.
-                    </p>
                 </div>
 
                 <div className="grid lg:grid-cols-2 gap-12 items-start">
 
-                    {/* Left Column: Contact Info & FAQ */}
+                    {/* Left Column: Contact Info */}
                     <div className="space-y-8">
                         {/* Status Card */}
                         <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
@@ -139,40 +150,10 @@ export default function ContactPage() {
                                 <p className="text-sm text-slate-500">San Francisco, CA</p>
                             </div>
                         </div>
-
-                        {/* FAQ Accordion */}
-                        <div className="space-y-4 pt-8">
-                            <h3 className="text-xl font-bold text-slate-900">Frequently Asked Questions</h3>
-                            <div className="space-y-2">
-                                {faqs.map((faq, index) => (
-                                    <div
-                                        key={index}
-                                        className="bg-white border border-slate-100 rounded-xl overflow-hidden transition-all duration-200 hover:border-slate-300"
-                                    >
-                                        <button
-                                            onClick={() => setActiveFaq(activeFaq === index ? null : index)}
-                                            className="w-full flex items-center justify-between p-4 text-left font-medium text-slate-700 hover:bg-slate-50/50 transition-colors"
-                                        >
-                                            {faq.question}
-                                            {activeFaq === index ? (
-                                                <ChevronUp className="w-5 h-5 text-slate-400" />
-                                            ) : (
-                                                <ChevronDown className="w-5 h-5 text-slate-400" />
-                                            )}
-                                        </button>
-                                        {activeFaq === index && (
-                                            <div className="px-4 pb-4 pt-0 text-slate-600 text-sm leading-relaxed border-t border-slate-50 bg-slate-50/30">
-                                                <div className="pt-2">{faq.answer}</div>
-                                            </div>
-                                        )}
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
                     </div>
 
                     {/* Right Column: Contact Form */}
-                    <div className="relative">
+                    <div id="contact-form" className="relative scroll-mt-32">
                         {/* Design Element */}
                         <div className="absolute -top-10 -right-10 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl -z-10" />
                         <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl -z-10" />

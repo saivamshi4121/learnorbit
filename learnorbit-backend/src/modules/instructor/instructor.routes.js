@@ -15,11 +15,19 @@ router.get('/stats', instructorController.getInstructorStats);
 router.post('/courses', instructorController.createCourse);
 router.get('/courses/:id', instructorController.getCourse);
 router.patch('/courses/:id', instructorController.updateCourse);
+router.delete('/courses/:id', instructorController.deleteCourse);
 router.get('/courses/:id/enrollments', instructorController.getCourseEnrollments);
 
 // Enrollment Management
 router.patch('/enrollments/:id/approve', instructorController.approveEnrollment);
 router.patch('/enrollments/:id/reject', instructorController.rejectEnrollment);
 router.patch('/enrollments/:id/remove', instructorController.removeEnrollment);
+
+// Lesson Management
+router.get('/courses/:id/lessons', instructorController.getCourseLessons);
+router.post('/courses/:id/lessons', instructorController.createLesson);
+router.patch('/lessons/:id', instructorController.updateLesson);
+router.delete('/lessons/:id', instructorController.deleteLesson);
+router.patch('/lessons/:id/order', instructorController.reorderLesson);
 
 module.exports = router;
