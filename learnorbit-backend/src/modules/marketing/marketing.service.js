@@ -24,7 +24,7 @@ class MarketingService {
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'new')
         `;
 
-        await pool.execute(sql, [
+        const values = [
             id,
             fullName,
             email,
@@ -36,7 +36,11 @@ class MarketingService {
             earlyAccessInterest ? 1 : 0, // Boolean to 1/0
             betaTester ? 1 : 0,        // Boolean to 1/0
             source || 'direct'
-        ]);
+        ];
+
+        console.log('Inserting into waitlist:', values); // Debug log
+
+        await pool.execute(sql, values);
 
         return { id, email, status: 'new' };
     }
