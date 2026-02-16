@@ -13,9 +13,9 @@ const redisConfig = {
   port: process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT, 10) : 6379,
   password: process.env.REDIS_PASSWORD || undefined,
   retryStrategy: (times) => {
-    // Stop retrying quickly if local dev and no redis
-    if (process.env.NODE_ENV !== 'production' && times > 5) {
-      return 30000; // Wait 30s between retries if local
+    // Stop retrying completely if local dev and no redis
+    if (process.env.NODE_ENV !== 'production' && times > 3) {
+      return null; // Stops retrying
     }
     const delay = Math.min(times * 100, 3000);
     return delay;
