@@ -27,8 +27,15 @@ exports.addToWaitlist = async (req, res) => {
         if (error.code === 'ER_DUP_ENTRY') {
             return res.status(409).json({ success: false, message: 'You are already on the waitlist.' });
         }
-        logger.error(`Waitlist Error: ${error.message}\n${error.stack}`);
-        res.status(500).json({ success: false, error: 'Server Error', details: error.message });
+
+        // Critical Debugging Log
+        console.error("Waitlist Error:", error);
+
+        res.status(500).json({
+            success: false,
+            error: "Server Error",
+            details: error.message
+        });
     }
 };
 
