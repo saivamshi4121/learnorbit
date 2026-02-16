@@ -3,23 +3,28 @@ const marketingService = require('./marketing.service');
 // Add Waitlist User
 exports.addToWaitlist = async (req, res) => {
     try {
-        const { email } = req.body;
-        if (!email) {
-            return res.status(400).json({ success: false, error: 'Email is required' });
+        const { fullName, email, role } = req.body;
+
+        // Validate required fields
+        if (!fullName || !email || !role) {
+            return res.status(400).json({ success: false, error: 'Full name, email, and role are required.' });
         }
 
-        // Add simple duplicate check (or handle constraint error)
-        // Here we let service throw and catch it
+        // Validate Role Enum
+        const validRoles = ['student', 'instructor', 'course_creator', 'institute', 'corporate_trainer'];
+        if (!validRoles.includes(role)) {
+            return res.status(400).json({ success: false, error: `Invalid role. Must be one of: ${validRoles.join(', ')}` });
+        }
+
         const result = await marketingService.addToWaitlist(req.body);
 
         res.status(201).json({
             success: true,
-            message: 'You have been added to the waitlist!',
-            data: result
+            message: 'Successfully joined waitlist.'
         });
     } catch (error) {
-        if (error.code === 'ER_DUP_ENTRY' || error.message.includes('already registered')) {
-            return res.status(409).json({ success: false, error: 'This email is already on the waitlist.' });
+        if (error.code === 'ER_DUP_ENTRY') {
+            return res.status(409).json({ success: false, message: 'You are already on the waitlist.' });
         }
         console.error('Waitlist Error:', error);
         res.status(500).json({ success: false, error: 'Server Error' });

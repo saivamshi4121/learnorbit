@@ -4,32 +4,37 @@ const { v4: uuidv4 } = require('uuid');
 
 class MarketingService {
     async addToWaitlist(data) {
-        const { fullName, email, role, currentLms, frustrations, desiredFeatures, pricingRange, source } = data;
-
-        // Check if email already exists
-        const [existing] = await pool.execute('SELECT id FROM marketing_waitlist_users WHERE email = ?', [email]);
-        if (existing.length > 0) {
-            throw new Error('Email already registered for waitlist');
-        }
+        const {
+            fullName,
+            email,
+            role,
+            currentPlatform,
+            frustrations,
+            desiredFeatures,
+            pricingExpectation,
+            earlyAccessInterest,
+            betaTester,
+            source
+        } = data;
 
         const id = uuidv4();
         const sql = `
-      INSERT INTO marketing_waitlist_users 
-      (id, full_name, email, role, current_lms, frustrations, desired_features, pricing_range, source, status)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'new')
-    `;
+            INSERT INTO marketing_waitlist_users 
+            (id, full_name, email, role, current_lms, frustrations, desired_features, pricing_range, early_access, beta_tester, source, status)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'new')
+        `;
 
-        // Ensure JSON fields are stringified if necessary, but MySQL driver handles objects for JSON columns usually.
-        // However, explicit stringification is safer.
         await pool.execute(sql, [
             id,
             fullName,
             email,
             role,
-            currentLms || null,
+            currentPlatform || null,
             JSON.stringify(frustrations || []),
             JSON.stringify(desiredFeatures || []),
-            pricingRange || null,
+            pricingExpectation || null,
+            earlyAccessInterest ? 1 : 0, // Boolean to 1/0
+            betaTester ? 1 : 0,        // Boolean to 1/0
             source || 'direct'
         ]);
 
