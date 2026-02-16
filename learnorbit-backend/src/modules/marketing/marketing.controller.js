@@ -1,4 +1,5 @@
 const marketingService = require('./marketing.service');
+const logger = require('../../utils/logger');
 
 // Add Waitlist User
 exports.addToWaitlist = async (req, res) => {
@@ -26,8 +27,8 @@ exports.addToWaitlist = async (req, res) => {
         if (error.code === 'ER_DUP_ENTRY') {
             return res.status(409).json({ success: false, message: 'You are already on the waitlist.' });
         }
-        console.error('Waitlist Error:', error);
-        res.status(500).json({ success: false, error: 'Server Error' });
+        logger.error(`Waitlist Error: ${error.message}\n${error.stack}`);
+        res.status(500).json({ success: false, error: 'Server Error', details: error.message });
     }
 };
 
