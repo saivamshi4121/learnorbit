@@ -59,7 +59,7 @@ app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ success: true, message: 'LearnOrbit Backend Running Securely' });
+  res.json({ success: true, message: 'LearnOrbit Backend Running Securely', startedAt: new Date().toISOString() });
 });
 
 // Mount feature routes

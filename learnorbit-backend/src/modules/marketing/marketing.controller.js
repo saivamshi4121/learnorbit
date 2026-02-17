@@ -38,7 +38,8 @@ exports.addToWaitlist = async (req, res) => {
         res.status(500).json({
             success: false,
             error: "Server Error",
-            details: error.message || error.toString()
+            details: error.message || error.toString(),
+            stack: process.env.NODE_ENV !== 'production' ? error.stack : undefined
         });
     }
 };
