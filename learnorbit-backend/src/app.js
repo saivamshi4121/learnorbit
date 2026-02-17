@@ -107,7 +107,9 @@ const PORT = process.env.PORT || 5000;
 if (require.main === module) {
   /* Auto-migration for marketing tables */
   const runAutoMigration = require('./utils/migrate');
-  runAutoMigration();
+  runAutoMigration().catch(err => {
+    logger.error('CRITICAL: Startup migration failed: ' + err.message);
+  });
 
   const server = app.listen(PORT, () => {
     logger.info(`🚀 Server running on port ${PORT}`);
