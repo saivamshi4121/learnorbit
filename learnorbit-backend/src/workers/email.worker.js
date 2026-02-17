@@ -1,4 +1,9 @@
 // src/workers/email.worker.js
+const path = require('path');
+// Load env vars - crucial for worker process
+const envPath = path.resolve(__dirname, '../../.env');
+require('dotenv').config({ path: envPath });
+
 const { Worker } = require('bullmq');
 const redisClient = require('../config/redisClient');
 const logger = require('../utils/logger');
@@ -12,35 +17,105 @@ const logger = require('../utils/logger');
  * Run with: node src/workers/email.worker.js
  */
 
+const nodemailer = require('nodemailer');
+
+// Configure Nodemailer transporter
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST,
+  port: process.env.SMTP_PORT,
+  secure: false, // true for 465, false for other ports
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  },
+});
+
 /**
- * Simulate sending an email (replace with actual email service)
- * In production, integrate with SendGrid, AWS SES, Mailgun, etc.
+ * Send an actual email using Nodemailer
  * 
  * @param {string} to - Recipient email
  * @param {string} subject - Email subject
- * @param {string} body - Email body
+ * @param {string} body - Email body (HTML)
  * @returns {Promise<Object>} Send result
  */
 async function sendEmail(to, subject, body) {
-  // TODO: Replace with actual email service integration
-  // Example with SendGrid:
-  // const sgMail = require('@sendgrid/mail');
-  // sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-  // await sgMail.send({ to, from: 'noreply@learnorbit.com', subject, html: body });
+  try {
+    const info = await transporter.sendMail({
+      from: `"LearnOrbit" <${process.env.SMTP_USER}>`, // sender address
+      to, // list of receivers
+      subject, // Subject line
+      html: body, // html body
+    });
 
-  // Simulate email sending delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
+    logger.info(`📧 Email sent successfully`, {
+      to,
+      subject,
+      messageId: info.messageId,
+    });
 
-  logger.info(`📧 Email sent successfully`, {
-    to,
-    subject,
-    bodyLength: body.length,
-  });
+    return {
+      success: true,
+      messageId: info.messageId,
+      timestamp: new Date().toISOString(),
+    };
+  } catch (error) {
+    logger.error(`Failed to send email to ${to}: ${error.message}`);
+    throw error;
+  }
+}
+
+/**
+ * Process waitlist confirmation email
+ * @param {Object} data - Job data
+ */
+async function processWaitlistEmail(data) {
+  const { fullName, email } = data;
+
+  const subject = 'Welcome to the LearnOrbit Waitlist! 🚀';
+  const body = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; background-color: #f4f4f5; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 40px auto; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        .header { background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%); color: white; padding: 40px 20px; text-align: center; }
+        .content { padding: 40px 30px; }
+        .footer { background: #f8fafc; padding: 20px; text-align: center; font-size: 12px; color: #64748b; border-top: 1px solid #e2e8f0; }
+        .button { display: inline-block; padding: 14px 32px; background: #4F46E5; color: white !important; text-decoration: none; border-radius: 9999px; font-weight: 600; margin-top: 24px; box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2); transition: transform 0.2s; }
+        .button:hover { transform: translateY(-1px); }
+        h1 { margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -0.025em; }
+        p { margin-bottom: 16px; font-size: 16px; color: #475569; }
+        .highlight { color: #4F46E5; font-weight: 600; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>Only Upwards! 🚀</h1>
+        </div>
+        <div class="content">
+          <p>Hi <span class="highlight">${fullName}</span>,</p>
+          <p>You've successfully secured your spot on the LearnOrbit waitlist. We're building the future of learning, and we're thrilled to have you with us on this journey.</p>
+          <p>We'll notify you as soon as early access opens. In the meantime, keep an eye on your inbox for exclusive updates and sneak peeks.</p>
+          <div style="text-align: center;">
+            <a href="${process.env.FRONTEND_URL || 'https://learnorbit.com'}" class="button">Visit Our Website</a>
+          </div>
+        </div>
+        <div class="footer">
+          <p>&copy; ${new Date().getFullYear()} LearnOrbit. All rights reserved.</p>
+          <p>You received this email because you signed up for the LearnOrbit waitlist.</p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  await sendEmail(email, subject, body);
 
   return {
-    success: true,
-    messageId: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-    timestamp: new Date().toISOString(),
+    emailSent: true,
+    recipient: email,
   };
 }
 
@@ -308,6 +383,10 @@ async function processEmailJob(job) {
 
       case 'password-reset':
         result = await processPasswordResetEmail(data);
+        break;
+
+      case 'waitlist-notification':
+        result = await processWaitlistEmail(data);
         break;
 
       default:

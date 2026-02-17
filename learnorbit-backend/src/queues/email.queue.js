@@ -233,6 +233,29 @@ process.on('SIGINT', async () => {
     logger.info('Email queue closed');
 });
 
+async function addWaitlistEmailJob(data) {
+    try {
+        const job = await emailQueue.add('waitlist-notification', data, {
+            priority: 2,                  // Medium priority
+            delay: 0,
+        });
+
+        logger.info(`Waitlist email job added to queue`, {
+            jobId: job.id,
+            email: data.email,
+        });
+
+        return job;
+    } catch (error) {
+        logger.error(`Failed to add waitlist email job to queue: ${error.message}`, {
+            error: error.stack,
+            data,
+        });
+        // Don't throw logic error to user if email queue fails, just log it
+        // throw error; 
+    }
+}
+
 module.exports = {
     emailQueue,
     addContactEmailJob,
@@ -240,4 +263,5 @@ module.exports = {
     addPasswordResetEmailJob,
     getQueueStats,
     addPaidEnrollmentJob,
+    addWaitlistEmailJob,
 };

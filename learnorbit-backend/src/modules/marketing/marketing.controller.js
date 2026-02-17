@@ -34,7 +34,7 @@ exports.addToWaitlist = async (req, res) => {
         res.status(500).json({
             success: false,
             error: "Server Error",
-            details: error.message
+            details: error.message || error.toString()
         });
     }
 };

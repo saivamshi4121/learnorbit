@@ -2,6 +2,8 @@ const path = require('path');
 const pool = require('../../config/db');
 const { v4: uuidv4 } = require('uuid');
 
+const { addWaitlistEmailJob } = require('../../queues/email.queue');
+
 class MarketingService {
     async addToWaitlist(data) {
         const {
@@ -41,6 +43,12 @@ class MarketingService {
         console.log('Inserting into waitlist:', values); // Debug log
 
         await pool.execute(sql, values);
+
+        // Add email job to queue
+        await addWaitlistEmailJob({
+            fullName,
+            email
+        });
 
         return { id, email, status: 'new' };
     }
