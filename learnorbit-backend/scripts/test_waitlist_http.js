@@ -1,8 +1,8 @@
 async function testWaitlistHttp() {
-    const url = 'http://localhost:65001/api/marketing/waitlist';
+    const url = 'http://localhost:5000/api/marketing/waitlist';
     const payload = {
         fullName: 'Http Test User',
-        email: 'duplicate_test@example.com',
+        email: 'unique_' + Date.now() + '@example.com',
         role: 'student',
         currentPlatform: 'Canvas',
         frustrations: ['Interface'],

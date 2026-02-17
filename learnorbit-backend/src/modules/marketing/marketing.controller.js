@@ -31,6 +31,10 @@ exports.addToWaitlist = async (req, res) => {
         // Critical Debugging Log
         console.error("Waitlist Error:", error);
 
+        // Write error to log file
+        const fs = require('fs');
+        fs.appendFileSync('error.log', new Date().toISOString() + ' Waitlist Error: ' + (error.stack || error.message) + '\n');
+
         res.status(500).json({
             success: false,
             error: "Server Error",

@@ -1,5 +1,5 @@
 // src/middlewares/redisRateLimiter.middleware.js
-const redis = require('../config/redisClient');
+const redis = require('../config/redis');
 const logger = require('../utils/logger');
 
 /**

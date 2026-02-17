@@ -1,4 +1,5 @@
 // src/app.js
+require('dotenv').config();
 const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
@@ -109,7 +110,7 @@ if (require.main === module) {
       logger.info('HTTP server closed');
 
       // Close Redis connection
-      const redisClient = require('./config/redisClient');
+      const redisClient = require('./config/redis');
       if (redisClient && redisClient.status === 'ready') {
         await redisClient.quit();
         logger.info('Redis connection closed');
