@@ -97,6 +97,10 @@ const PORT = process.env.PORT || 5000;
 
 // Start server only if not being imported as a module
 if (require.main === module) {
+  /* Auto-migration for marketing tables */
+  const runAutoMigration = require('./utils/migrate');
+  runAutoMigration();
+
   const server = app.listen(PORT, () => {
     logger.info(`🚀 Server running on port ${PORT}`);
     logger.info(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
