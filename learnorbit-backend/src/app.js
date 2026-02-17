@@ -59,7 +59,15 @@ app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ success: true, message: 'LearnOrbit Backend Running Securely', startedAt: new Date().toISOString() });
+  const dbHost = process.env.DB_HOST || 'not set';
+  const maskedDbHost = dbHost === 'localhost' || dbHost === '127.0.0.1' ? dbHost : dbHost.substring(0, 3) + '***';
+  res.json({
+    success: true,
+    message: 'LearnOrbit Backend Running Securely',
+    startedAt: new Date().toISOString(),
+    env: process.env.NODE_ENV,
+    dbHost: maskedDbHost
+  });
 });
 
 // Mount feature routes
