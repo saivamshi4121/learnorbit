@@ -251,8 +251,8 @@ async function addWaitlistEmailJob(data) {
             error: error.stack,
             data,
         });
-        // Don't throw logic error to user if email queue fails, just log it
-        // throw error; 
+        // Important: Return null instead of throwing to prevent crashing main thread
+        return null;
     }
 }
 

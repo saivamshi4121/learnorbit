@@ -44,11 +44,15 @@ class MarketingService {
 
         await pool.execute(sql, values);
 
-        // Add email job to queue
-        await addWaitlistEmailJob({
-            fullName,
-            email
-        });
+        try {
+            // Add email job to queue - but don't fail the request if Redis is down
+            await addWaitlistEmailJob({
+                fullName,
+                email
+            });
+        } catch (queueError) {
+            console.error('Failed to queue waitlist email (non-fatal):', queueError.message);
+        }
 
         return { id, email, status: 'new' };
     }
