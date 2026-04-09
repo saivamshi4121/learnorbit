@@ -22,6 +22,9 @@ const authRoutes = require('./routes/auth.routes');
 const contactRoutes = require('./routes/contact.routes');
 const uploadRoutes = require('./modules/upload/upload.routes');
 const marketingRoutes = require('./modules/marketing/marketing.routes');
+const instituteRoutes = require('./modules/institute/institute.routes');
+const agentRoutes = require('./modules/agent/agent.routes');
+const aiRoutes = require('./modules/ai/ai.routes');
 
 const app = express();
 
@@ -82,6 +85,9 @@ app.use('/api/v1/instructor', instructorRoutes);
 app.use('/api/v1/admin', adminRoutes);
 app.use(lessonRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/api', instituteRoutes);
+app.use('/api/agent', agentRoutes);
+app.use('/api/ai', aiRoutes);
 
 // 404 handler
 app.use((req, res) => {
@@ -105,16 +111,19 @@ const PORT = process.env.PORT || 5000;
 
 // Start server only if not being imported as a module
 if (require.main === module) {
-  /* Auto-migration for marketing tables */
-  const runAutoMigration = require('./utils/migrate');
-  runAutoMigration().catch(err => {
-    logger.error('CRITICAL: Startup migration failed: ' + err.message);
-  });
-
   const server = app.listen(PORT, () => {
     logger.info(`🚀 Server running on port ${PORT}`);
     logger.info(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
     logger.info(`🔒 CORS origin: ${process.env.FRONTEND_URL || '*'}`);
+
+    // Delay migration by 3s so the pool has time to establish its first connection
+    // before we run DDL. PgBouncer can reject connections attempted too early at startup.
+    const runAutoMigration = require('./utils/migrate');
+    setTimeout(() => {
+      runAutoMigration().catch(err => {
+        logger.warn('Startup migration failed (non-critical): ' + err.message);
+      });
+    }, 3000);
   });
 
   // Graceful shutdown

@@ -3,9 +3,10 @@
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { LayoutDashboard, Users, BookOpen, LogOut } from 'lucide-react';
+import { LayoutDashboard, Users, BookOpen, LogOut, Building2 } from 'lucide-react';
 import { logout, getCurrentUser } from '@/lib/auth';
 import { useEffect, useState } from 'react';
+import CourseAgent from '@/components/dashboard/CourseAgent';
 
 export default function AdminLayout({
     children,
@@ -15,14 +16,16 @@ export default function AdminLayout({
     const pathname = usePathname();
     const router = useRouter();
     const [userName, setUserName] = useState<string>('Admin');
+    const [userRole, setUserRole] = useState<string>('admin');
 
     useEffect(() => {
         const user = getCurrentUser();
-        if (!user || user.role !== 'admin') {
+        if (!user || !['admin', 'super_admin'].includes(user.role)) {
             router.push('/login');
             return;
         }
         setUserName(user.name);
+        setUserRole(user.role);
     }, [router]);
 
     const handleLogout = () => {
@@ -30,21 +33,10 @@ export default function AdminLayout({
     };
 
     const navItems = [
-        {
-            name: 'Dashboard',
-            href: '/admin/dashboard',
-            icon: LayoutDashboard,
-        },
-        {
-            name: 'Users',
-            href: '/admin/users',
-            icon: Users,
-        },
-        {
-            name: 'Courses',
-            href: '/admin/courses',
-            icon: BookOpen,
-        },
+        { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
+        { name: 'Users', href: '/admin/users', icon: Users },
+        { name: 'Courses', href: '/admin/courses', icon: BookOpen },
+        ...(userRole === 'super_admin' ? [{ name: 'Institutes', href: '/admin/institutes', icon: Building2 }] : []),
     ];
 
     return (
@@ -141,6 +133,9 @@ export default function AdminLayout({
             <main>
                 {children}
             </main>
+
+            {/* AI Course Agent */}
+            <CourseAgent />
         </div>
     );
 }

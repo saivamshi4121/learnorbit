@@ -29,7 +29,7 @@ export default function AdminUserManagement() {
     useEffect(() => {
         // Role-based access control
         const user = getCurrentUser();
-        if (!user || user.role !== 'admin') {
+        if (!user || !['admin', 'super_admin'].includes(user.role)) {
             router.push('/login');
             return;
         }

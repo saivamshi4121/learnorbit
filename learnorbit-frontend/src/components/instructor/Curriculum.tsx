@@ -91,7 +91,7 @@ export default function Curriculum({ courseId, initialLessons }: CurriculumProps
     const [loading, setLoading] = useState(false);
 
     const { register, handleSubmit, reset, watch, setValue, formState: { errors } } = useForm<LessonFormValues>({
-        resolver: zodResolver(lessonSchema),
+        resolver: zodResolver(lessonSchema) as any,
         defaultValues: {
             title: "",
             type: "video",
@@ -135,7 +135,7 @@ export default function Curriculum({ courseId, initialLessons }: CurriculumProps
         setIsModalOpen(true);
     };
 
-    const onSubmit = async (data: LessonFormValues) => {
+    const onSubmit = async (data: any) => {
         setLoading(true);
         try {
             if (editingLesson) {

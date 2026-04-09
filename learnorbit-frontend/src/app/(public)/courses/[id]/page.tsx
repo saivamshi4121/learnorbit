@@ -201,11 +201,10 @@ export default function CourseDetailPage() {
                     is_free: course.is_free || false,
                     price: course.price || 0,
                     duration: course.duration || "Self-paced",
-                    thumbnail_url: course.thumbnail_url,
+                    thumbnail_url: course.thumbnail_url || null,
                 }}
                 onEnroll={handleEnrollClick}
                 isEnrolling={isEnrolling}
-                isEnrolled={isEnrolled}
             />
 
             {/* Content Section */}

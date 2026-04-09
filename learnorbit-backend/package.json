@@ -21,6 +21,7 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@google/genai": "^1.45.0",
     "@prisma/client": "^7.3.0",
     "bcrypt": "^6.0.0",
     "bullmq": "^5.67.3",

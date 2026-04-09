@@ -5,7 +5,7 @@ const { protect, authorizeRoles } = require('../../middlewares/auth.middleware')
 
 // All routes require authentication and admin role
 router.use(protect);
-router.use(authorizeRoles('admin'));
+router.use(authorizeRoles('admin', 'super_admin'));
 
 // Dashboard
 router.get('/dashboard', adminController.getDashboardStats);

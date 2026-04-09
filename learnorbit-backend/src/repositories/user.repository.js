@@ -79,6 +79,7 @@ class UserRepository {
           avatar_url, bio, phone,
           expertise, years_of_experience, linkedin_url,
           enrollment_date, student_id,
+          institute_id,
           created_at, updated_at, last_login_at
         FROM users
         WHERE email = $1
@@ -109,6 +110,7 @@ class UserRepository {
           avatar_url, bio, phone,
           expertise, years_of_experience, linkedin_url,
           enrollment_date, student_id,
+          institute_id,
           created_at, updated_at, last_login_at
         FROM users
         WHERE id = $1

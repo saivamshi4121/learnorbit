@@ -61,7 +61,8 @@ export interface User {
     id: number;
     name: string;
     email: string;
-    role: 'student' | 'instructor' | 'admin';
+    role: 'student' | 'instructor' | 'admin' | 'super_admin' | 'institute_admin';
+    institute_id?: string;
 }
 
 // Get current user from localStorage

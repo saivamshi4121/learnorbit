@@ -35,10 +35,14 @@ export default function LoginPage() {
             // Redirect based on role
             if (user.role === 'instructor') {
                 router.push('/instructor');
+            } else if (user.role === 'institute_admin') {
+                router.push('/institute');
+            } else if (user.role === 'super_admin') {
+                router.push('/admin/institutes');
             } else if (user.role === 'admin') {
                 router.push('/admin');
             } else {
-                router.push('/student');
+                router.push('/student/my-courses');
             }
 
         } catch (err: any) {

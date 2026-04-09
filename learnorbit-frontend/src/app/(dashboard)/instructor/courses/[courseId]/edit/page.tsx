@@ -6,6 +6,7 @@ import { Loader2 } from "lucide-react";
 
 import CourseForm from "@/components/instructor/CourseForm";
 import Curriculum from "@/components/instructor/Curriculum";
+import QuizGenerator from "@/components/instructor/QuizGenerator";
 import { getCourse } from "@/lib/services/instructor.service";
 import { getInstructorLessons, Lesson } from "@/lib/services/lessons.service";
 import { InstructorCourse } from "@/types/instructor";
@@ -64,6 +65,13 @@ export default function EditCoursePage() {
         fetchData();
     }, [courseId, router]);
 
+    const refreshLessons = async () => {
+        const res = await getInstructorLessons(courseId);
+        if (res.success) {
+            setLessons(res.data);
+        }
+    };
+
     if (loading) {
         return (
             <div className="flex h-[50vh] w-full items-center justify-center">
@@ -79,6 +87,7 @@ export default function EditCoursePage() {
     return (
         <div className="max-w-3xl mx-auto pb-20">
             <CourseForm initialData={course} />
+            <QuizGenerator courseId={courseId} onQuizSaved={refreshLessons} />
             <Curriculum courseId={courseId} initialLessons={lessons} />
         </div>
     );

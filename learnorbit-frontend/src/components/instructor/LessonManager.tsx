@@ -32,7 +32,8 @@ export function LessonManager({ courseId }: LessonManagerProps) {
         type: 'video',
         content: '',
         duration_seconds: 0,
-        completion_required: true,
+        completion_rule: 'manual',
+        is_published: true,
         order_index: 0
     });
 
@@ -60,7 +61,8 @@ export function LessonManager({ courseId }: LessonManagerProps) {
             type: 'video',
             content: '',
             duration_seconds: 0,
-            completion_required: true,
+            completion_rule: 'manual',
+            is_published: true,
             order_index: lessons.length
         });
         setIsAdding(true);
@@ -73,7 +75,8 @@ export function LessonManager({ courseId }: LessonManagerProps) {
             type: lesson.type,
             content: lesson.content || '',
             duration_seconds: lesson.duration_seconds || 0,
-            completion_required: lesson.completion_required,
+            completion_rule: lesson.completion_rule || 'manual',
+            is_published: lesson.is_published,
             order_index: lesson.order_index
         });
         setEditingLessonId(lesson.id);

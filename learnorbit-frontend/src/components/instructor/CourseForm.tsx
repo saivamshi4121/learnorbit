@@ -37,17 +37,10 @@ export default function CourseForm({ initialData }: CourseFormProps) {
     const [loading, setLoading] = useState(false);
     const [uploadingFile, setUploadingFile] = useState(false);
     const [uploadMode, setUploadMode] = useState<"link" | "upload">("link");
-    const isEditing = !!initialData;
+    const isEditing = !!initialData?.id;
 
-    const {
-        register,
-        handleSubmit,
-        control,
-        watch,
-        setValue,
-        formState: { errors },
-    } = useForm<FormValues>({
-        resolver: zodResolver(formSchema),
+    const { register, handleSubmit, watch, setValue, control, formState: { errors } } = useForm<FormValues>({
+        resolver: zodResolver(formSchema) as any,
         defaultValues: {
             title: initialData?.title || "",
             description: initialData?.description || "",
@@ -97,7 +90,7 @@ export default function CourseForm({ initialData }: CourseFormProps) {
         }
     };
 
-    const onSubmit = async (data: FormValues) => {
+    const onSubmit = async (data: any) => {
         setLoading(true);
         try {
             if (isEditing && initialData) {

@@ -18,6 +18,7 @@ import { TableSkeleton } from '@/components/ui/TableSkeleton';
 import { Switch } from '@/components/ui/Switch';
 import { getInstructorCourses, getInstructorStats, toggleCoursePublish } from '@/lib/services/instructor.service';
 import { InstructorCourse, InstructorStats } from '@/types/instructor';
+import CourseAgent from '@/components/dashboard/CourseAgent';
 
 type SortKey = 'title' | 'enrollment_count' | 'updated_at';
 type SortDirection = 'asc' | 'desc';
@@ -342,6 +343,9 @@ export default function InstructorDashboard() {
                     )}
                 </div>
             </div>
+
+            {/* AI Course Agent */}
+            <CourseAgent />
         </div>
     );
 }

@@ -69,7 +69,7 @@ exports.getDashboardDetails = async (req, res) => {
     try {
         // Get recent users (last 5)
         const { rows: recentUsers } = await db.query(`
-            SELECT id, name, email, role, created_at as joinedAt
+            SELECT id, name, email, role, created_at as "joinedAt"
             FROM users
             ORDER BY created_at DESC
             LIMIT 5
@@ -80,8 +80,8 @@ exports.getDashboardDetails = async (req, res) => {
             SELECT 
                 c.id,
                 c.title,
-                u.name as instructorName,
-                c.created_at as createdAt
+                u.name as "instructorName",
+                c.created_at as "createdAt"
             FROM courses c
             JOIN users u ON c.instructor_id = u.id
             ORDER BY c.created_at DESC
@@ -93,8 +93,8 @@ exports.getDashboardDetails = async (req, res) => {
             SELECT 
                 c.id,
                 c.title,
-                u.name as instructorName,
-                c.created_at as createdAt
+                u.name as "instructorName",
+                c.created_at as "createdAt"
             FROM courses c
             JOIN users u ON c.instructor_id = u.id
             WHERE c.is_published = FALSE
@@ -125,7 +125,7 @@ exports.getDashboardDetails = async (req, res) => {
 exports.getUsers = async (req, res) => {
     try {
         const { role, search } = req.query;
-        let query = 'SELECT id, name, email, role, created_at as joinedAt FROM users WHERE 1=1';
+        let query = 'SELECT id, name, email, role, created_at as "joinedAt" FROM users WHERE 1=1';
         const params = [];
 
         if (role && role !== 'all') {
@@ -221,10 +221,10 @@ exports.getCourses = async (req, res) => {
             SELECT 
                 c.id,
                 c.title,
-                u.name as instructorName,
+                u.name as "instructorName",
                 c.is_published as status,
-                COUNT(DISTINCT e.id) as enrollmentCount,
-                c.created_at as createdAt
+                COUNT(DISTINCT e.id) as "enrollmentCount",
+                c.created_at as "createdAt"
             FROM courses c
             JOIN users u ON c.instructor_id = u.id
             LEFT JOIN enrollments e ON c.id = e.course_id

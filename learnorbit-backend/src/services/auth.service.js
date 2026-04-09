@@ -67,10 +67,10 @@ class AuthService {
    */
   static async register({ name, email, password, role = 'student', profile = {} }) {
     try {
-      // Validate role
-      const validRoles = ['admin', 'instructor', 'student'];
+      // Validate role — public registration only allows student
+      const validRoles = ['student'];
       if (!validRoles.includes(role)) {
-        throw new Error('Invalid role specified');
+        role = 'student'; // silently downgrade unsafe roles
       }
 
       // Check if email already exists
@@ -99,24 +99,19 @@ class AuthService {
 
       // Generate email verification token
       const verificationToken = this._generateRandomToken();
-      const expiresAt = addHours(new Date(), 24); // 24 hours
-
+      const expiresAt = addHours(new Date(), 24);
       await UserRepo.setEmailVerificationToken(userId, verificationToken, expiresAt);
 
-      logger.info(`User registered successfully`, {
-        userId,
-        email,
-        role,
-      });
+      // Activate any pending institute course invitations for this email
+      try {
+        const instRepo = require('../modules/institute/institute.repository');
+        const activated = await instRepo.activatePendingInvites(email.toLowerCase(), userId);
+        if (activated > 0) {
+          logger.info(`Activated ${activated} pending institute course invite(s) for ${email}`);
+        }
+      } catch (_) { /* non-critical */ }
 
-      // TODO: Send verification email
-      // await emailQueue.add('email-verification', {
-      //   userId,
-      //   email,
-      //   name,
-      //   verificationToken,
-      // });
-
+      logger.info(`User registered successfully`, { userId, email, role });
       return userId;
     } catch (error) {
       logger.error(`Registration failed: ${error.message}`, {
@@ -178,7 +173,7 @@ class AuthService {
       }
 
       // Verify password
-      const passwordMatches = await bcrypt.compare(password, user.password);
+      const passwordMatches = await bcrypt.compare(password, user.password_hash || user.password);
       if (!passwordMatches) {
         await UserRepo.incrementFailedAttempts(user.id);
         await AuditLogRepo.log({
@@ -214,13 +209,15 @@ class AuthService {
         details: { role: user.role },
       });
 
-      // Generate tokens
-      const accessToken = this._generateAccessToken({
+      // Generate tokens — include institute_id for institute_admin accounts
+      const tokenPayload = {
         id: user.id,
         email: user.email,
         role: user.role,
         name: user.name,
-      });
+      };
+      if (user.institute_id) tokenPayload.institute_id = user.institute_id;
+      const accessToken = this._generateAccessToken(tokenPayload);
 
       const refreshToken = this._generateRefreshToken();
       const refreshExpiresAt = addDays(new Date(), REFRESH_TOKEN_EXPIRES_DAYS);
@@ -302,13 +299,15 @@ class AuthService {
         userAgent,
       });
 
-      // Generate new access token
-      const accessToken = this._generateAccessToken({
+      // Generate new access token — preserve institute_id on refresh
+      const tokenPayload = {
         id: user.id,
         email: user.email,
         role: user.role,
         name: user.name,
-      });
+      };
+      if (user.institute_id) tokenPayload.institute_id = user.institute_id;
+      const accessToken = this._generateAccessToken(tokenPayload);
 
       await AuditLogRepo.log({
         userId: user.id,

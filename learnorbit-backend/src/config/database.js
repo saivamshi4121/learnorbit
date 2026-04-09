@@ -1,23 +1,22 @@
 const { Pool } = require('pg');
 require('dotenv').config();
+const dns = require('dns');
+
+// Force Node.js to resolve hostnames to IPv4 addresses first.
+// Supabase DB hosts (db.*.supabase.co) resolve to IPv6 on some Indian ISPs (e.g. Reliance)
+// which don't route IPv6 traffic. This ensures we always get an IPv4 connection.
+dns.setDefaultResultOrder('ipv4first');
 
 const pool = new Pool({
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    ssl: { rejectUnauthorized: false }, // Required for Supabase
-    max: 20, // Increase pool size (Production Hardening)
-    schema: 'public', // Default schema
+    connectionString: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false },
+    max: 10,
     idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 2000,
+    connectionTimeoutMillis: 8000,
 });
 
-// Error handling to prevent client leak if connection drops unexpectedly
-pool.on('error', (err, client) => {
-    console.error('Unexpected error on idle client', err);
-    process.exit(-1);
+pool.on('error', (err) => {
+    console.error('Unexpected error on idle DB client:', err.message);
 });
 
 module.exports = pool;

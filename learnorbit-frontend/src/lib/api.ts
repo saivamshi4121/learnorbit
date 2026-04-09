@@ -10,7 +10,7 @@ import { getAccessToken, clearTokens } from './auth';
 
 // Create axios instance with base configuration
 export const api = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:65000/api',
+    baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api',
     timeout: 30000, // 30 seconds
     headers: {
         'Content-Type': 'application/json',
@@ -57,8 +57,14 @@ api.interceptors.response.use(
         }
 
         // Handle 403 Forbidden - insufficient permissions
+        // This usually means a stale token with the wrong role is being used.
+        // Clear storage and force re-login so the user gets the right token.
         if (error.response?.status === 403) {
-            console.error('Access forbidden:', error.response.data);
+            console.warn('Access forbidden (wrong role or stale token):', error.config?.url);
+            clearTokens();
+            if (typeof window !== 'undefined') {
+                window.location.href = '/login';
+            }
         }
 
         // Handle 500 Internal Server Error
