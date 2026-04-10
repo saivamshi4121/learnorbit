@@ -3,8 +3,11 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Loader2, Mail, Lock, User, ArrowRight, Github, BookOpen } from "lucide-react";
-
+import { useRouter } from "next/navigation";
+import { post } from "@/lib/api";
+import { toast } from "sonner";
 export default function RegisterPage() {
+    const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         name: "",
@@ -19,10 +22,28 @@ export default function RegisterPage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        
+        if (formData.password !== formData.confirmPassword) {
+            toast.error("Passwords do not match");
+            return;
+        }
+        
         setLoading(true);
-        // Simulate register API call
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-        setLoading(false);
+        try {
+            await post('/auth/register', {
+                name: formData.name,
+                email: formData.email,
+                password: formData.password,
+                role: 'student'
+            });
+            toast.success("Registration successful! You can now log in.");
+            router.push('/login');
+        } catch (err: any) {
+            console.error("Registration failed:", err);
+            toast.error(err.response?.data?.error || "Registration failed. Please try again.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
