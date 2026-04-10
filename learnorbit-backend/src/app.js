@@ -111,7 +111,7 @@ const PORT = process.env.PORT || 5000;
 
 // Start server only if not being imported as a module
 if (require.main === module) {
-  const server = app.listen(PORT, () => {
+  const server = app.listen(PORT, '0.0.0.0', () => {
     logger.info(`🚀 Server running on port ${PORT}`);
     logger.info(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
     logger.info(`🔒 CORS origin: ${process.env.FRONTEND_URL || '*'}`);
