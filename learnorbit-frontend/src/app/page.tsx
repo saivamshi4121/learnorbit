@@ -840,86 +840,6 @@ function CTASection() {
   );
 }
 
-/* ============================================
-   FOOTER
-   ============================================ */
-function Footer() {
-  return (
-    <footer className="bg-gray-900 text-white">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-16 lg:py-20">
-        <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-12 mb-16">
-          <div className="lg:col-span-2">
-            <Link href="/" className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-gradient-to-br from-primary to-blue-700 rounded-xl flex items-center justify-center">
-                <BookOpen className="h-5 w-5 text-white" />
-              </div>
-              <span className="text-xl font-bold">LearnOrbit</span>
-            </Link>
-            <p className="text-gray-400 max-w-sm mb-6">
-              Structured learning for developers who want to build real products and advance their careers.
-            </p>
-            <div className="flex items-center gap-4">
-              {["Twitter", "GitHub", "Discord", "YouTube"].map((social) => (
-                <button
-                  key={social}
-                  className="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors"
-                >
-                  <span className="text-xs font-medium">{social[0]}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {[
-            { title: "Platform", links: ["Courses", "Pricing", "Enterprise", "Careers"] },
-            { title: "Resources", links: ["Blog", "Tutorials", "Community", "Events"] },
-            { title: "Company", links: ["About", "Contact", "Privacy", "Terms"] },
-          ].map((column) => (
-            <div key={column.title}>
-              <p className="font-semibold mb-4">{column.title}</p>
-              <div className="space-y-3">
-                {column.links.map((link) => (
-                  <Link
-                    key={link}
-                    href={`/${link.toLowerCase()}`}
-                    className="block text-gray-400 hover:text-white transition-colors"
-                  >
-                    {link}
-                  </Link>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-gray-400 text-sm">
-            © 2026 LearnOrbit. All rights reserved.
-          </p>
-          <p className="text-gray-400 text-sm">
-            Made with ❤️ for developers
-          </p>
-        </div>
-      </div>
-    </footer>
-  );
-}
-
-/* ============================================
-   CUSTOM ANIMATIONS (Add to globals.css)
-   ============================================ */
-// Add this to your globals.css:
-// @keyframes bounce-slow {
-//   0%, 100% {transform: translateY(0); }
-//   50% {transform: translateY(-10px); }
-// }
-// .animate-bounce-slow {
-//   animation: bounce-slow 3s ease-in-out infinite;
-// }
-
-/* ============================================
-   MAIN PAGE
-   ============================================ */
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-white">
@@ -931,7 +851,6 @@ export default function HomePage() {
       <TestimonialsSection />
       <StatsSection />
       <CTASection />
-      <Footer />
     </div>
   );
 }

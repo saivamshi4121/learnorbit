@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Toaster } from "sonner";
 import { SmoothScrolling } from "@/components/ui/SmoothScrolling";
+import { WelcomeAnimation } from "@/components/layout/WelcomeAnimation";
+import { Footer } from "@/components/layout/Footer";
 import "./globals.css";
 
 const inter = Inter({
@@ -36,8 +38,10 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} font-sans`}>
+        <WelcomeAnimation />
         <SmoothScrolling>
           {children}
+          <Footer />
           <Toaster
             position="top-right"
             richColors

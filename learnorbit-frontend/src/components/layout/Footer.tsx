@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
     Facebook,
     Twitter,
@@ -12,11 +13,21 @@ import {
     Mail,
     MapPin,
     Phone,
-    ArrowRight
+    ArrowRight,
+    GraduationCap
 } from "lucide-react";
 
 export function Footer() {
+    const pathname = usePathname();
     const currentYear = new Date().getFullYear();
+
+    // Hide footer in dashboards and student areas
+    const isDashboard = pathname?.startsWith('/dashboard') || 
+                        pathname?.includes('/student') || 
+                        pathname?.includes('/instructor') || 
+                        pathname?.includes('/admin');
+
+    if (isDashboard) return null;
 
     const footerLinks = {
         product: [
@@ -47,159 +58,132 @@ export function Footer() {
     };
 
     return (
-        <footer className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-gray-300 relative overflow-hidden">
-            {/* Background Pattern */}
-            <div
-                className="absolute inset-0 opacity-[0.02]"
-                style={{
-                    backgroundImage: `radial-gradient(circle at 2px 2px, white 1px, transparent 0)`,
-                    backgroundSize: '40px 40px',
-                }}
-            />
-
-            {/* Animated Gradient Orbs */}
-            <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl" />
-            <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl" />
+        <footer className="bg-[#020a1a] text-gray-300 relative overflow-hidden border-t border-white/5">
+            {/* Professional Background Elements */}
+            <div className="absolute inset-0 pointer-events-none">
+                <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-blue-600/5 rounded-full blur-[120px]" />
+                <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-purple-600/5 rounded-full blur-[120px]" />
+                <div 
+                    className="absolute inset-0 opacity-[0.015]"
+                    style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)', backgroundSize: '40px 40px' }}
+                />
+            </div>
 
             <div className="relative max-w-7xl mx-auto px-6 lg:px-8">
-                {/* Main Footer Content */}
-                <div className="py-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
-                    {/* Brand Column with Interactive Logo */}
-                    <div className="lg:col-span-2">
-                        <motion.div
-                            className="group mb-6"
-                            whileHover={{ scale: 1.02 }}
-                            transition={{ type: "spring", stiffness: 300 }}
-                        >
-                            <Link href="/" className="inline-block relative">
-                                {/* Orbital Ring Animation on Hover */}
-                                <motion.div
-                                    className="absolute -inset-4 rounded-full border border-blue-400/0 group-hover:border-blue-400/30"
-                                    initial={{ rotate: 0, scale: 1 }}
-                                    whileHover={{ rotate: 180, scale: 1.1 }}
-                                    transition={{ duration: 2 }}
-                                />
-                                <motion.div
-                                    className="absolute -inset-6 rounded-full border border-purple-400/0 group-hover:border-purple-400/20 border-dashed"
-                                    initial={{ rotate: 0, scale: 1 }}
-                                    whileHover={{ rotate: -180, scale: 1.15 }}
-                                    transition={{ duration: 3 }}
-                                />
-
-                                {/* Logo with Glow Effect */}
-                                <div className="relative bg-white/5 group-hover:bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/10 group-hover:border-white/20 transition-all">
-                                    <Image
-                                        src="/learnorbit.png"
-                                        alt="LearnOrbit"
-                                        width={200}
-                                        height={56}
-                                        className="w-auto h-12 group-hover:drop-shadow-[0_0_20px_rgba(59,130,246,0.5)] transition-all"
-                                    />
-                                </div>
-                            </Link>
-                        </motion.div>
-
-                        <p className="text-gray-400 mb-6 leading-relaxed max-w-sm">
-                            Empowering learners worldwide with production-ready skills and career-changing education.
-                        </p>
-
-                        {/* Contact Info */}
-                        <div className="space-y-3 text-sm">
-                            <div className="flex items-center gap-2 text-gray-400 hover:text-blue-400 transition-colors">
-                                <Mail className="w-4 h-4" />
-                                <span>support@learnorbit.com</span>
-                            </div>
-                            <div className="flex items-center gap-2 text-gray-400 hover:text-blue-400 transition-colors">
-                                <Phone className="w-4 h-4" />
-                                <span>+1 (555) 123-4567</span>
-                            </div>
-                            <div className="flex items-center gap-2 text-gray-400">
-                                <MapPin className="w-4 h-4" />
-                                <span>San Francisco, CA</span>
-                            </div>
-                        </div>
+                {/* Newsletter Section */}
+                <div className="py-12 border-b border-white/5 flex flex-col lg:flex-row items-center justify-between gap-8">
+                    <div className="max-w-md text-center lg:text-left">
+                        <h3 className="text-2xl font-bold text-white mb-2 tracking-tight">Stay in the Orbit</h3>
+                        <p className="text-gray-400 text-sm">Get the latest course updates, tech insights, and career tips delivered to your inbox.</p>
                     </div>
-
-                    {/* Product Links */}
-                    <div>
-                        <h3 className="text-white font-semibold mb-4">Product</h3>
-                        <ul className="space-y-3">
-                            {footerLinks.product.map((link) => (
-                                <li key={link.name}>
-                                    <Link
-                                        href={link.href}
-                                        className="text-gray-400 hover:text-white transition-colors flex items-center gap-1 group"
-                                    >
-                                        <span>{link.name}</span>
-                                        <ArrowRight className="w-3 h-3 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
-                                    </Link>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-
-                    {/* Company Links */}
-                    <div>
-                        <h3 className="text-white font-semibold mb-4">Company</h3>
-                        <ul className="space-y-3">
-                            {footerLinks.company.map((link) => (
-                                <li key={link.name}>
-                                    <Link
-                                        href={link.href}
-                                        className="text-gray-400 hover:text-white transition-colors flex items-center gap-1 group"
-                                    >
-                                        <span>{link.name}</span>
-                                        <ArrowRight className="w-3 h-3 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
-                                    </Link>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-
-                    {/* Resources Links */}
-                    <div>
-                        <h3 className="text-white font-semibold mb-4">Resources</h3>
-                        <ul className="space-y-3">
-                            {footerLinks.resources.map((link) => (
-                                <li key={link.name}>
-                                    <Link
-                                        href={link.href}
-                                        className="text-gray-400 hover:text-white transition-colors flex items-center gap-1 group"
-                                    >
-                                        <span>{link.name}</span>
-                                        <ArrowRight className="w-3 h-3 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
-                                    </Link>
-                                </li>
-                            ))}
-                        </ul>
+                    <div className="w-full max-w-md">
+                        <form className="flex gap-2 p-1.5 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm focus-within:border-blue-500/50 transition-all">
+                            <input 
+                                type="email" 
+                                placeholder="Enter your email" 
+                                className="flex-1 bg-transparent border-none focus:ring-0 text-sm px-4 py-2.5 text-white placeholder:text-gray-500"
+                            />
+                            <button className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-all shadow-lg shadow-blue-600/20 active:scale-95">
+                                Subscribe
+                            </button>
+                        </form>
                     </div>
                 </div>
 
-                {/* Bottom Bar */}
-                <div className="border-t border-gray-700/50 py-8">
-                    <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-                        {/* Copyright */}
-                        <p className="text-sm text-gray-400">
-                            © {currentYear} LearnOrbit. All rights reserved.
+                {/* Main Content */}
+                <div className="py-20 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8">
+                    {/* Brand Column */}
+                    <div className="lg:col-span-4">
+                        <Link href="/" className="inline-block mb-8 group">
+                            <div className="relative">
+                                <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
+                                <div className="relative bg-[#020a1a] rounded-xl p-3 border border-white/10">
+                                    <Image
+                                        src="/learnorbit.png"
+                                        alt="LearnOrbit"
+                                        width={160}
+                                        height={45}
+                                        className="w-auto h-10 transition-all"
+                                    />
+                                </div>
+                            </div>
+                        </Link>
+                        <p className="text-gray-400 text-sm leading-relaxed mb-8 max-w-sm">
+                            LearnOrbit is a next-generation LMS designed for the modern developer. We combine AI-driven intelligence with production-ready curricula to accelerate your career.
                         </p>
-
-                        {/* Social Links with Hover Effects */}
-                        <div className="flex items-center gap-4">
+                        <div className="flex gap-4">
                             {footerLinks.social.map((social) => {
                                 const Icon = social.icon;
                                 return (
                                     <motion.a
                                         key={social.name}
                                         href={social.href}
-                                        className={`w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 flex items-center justify-center text-gray-400 ${social.color} transition-all`}
-                                        whileHover={{ scale: 1.1, rotate: 5 }}
-                                        whileTap={{ scale: 0.95 }}
+                                        className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:border-blue-500/50 hover:bg-blue-500/10 transition-all"
+                                        whileHover={{ y: -4 }}
+                                        whileTap={{ scale: 0.9 }}
                                     >
-                                        <Icon className="w-4 h-4" />
+                                        <Icon className="w-5 h-5" />
                                     </motion.a>
                                 );
                             })}
                         </div>
+                    </div>
+
+                    {/* Links Columns */}
+                    <div className="lg:col-span-8 grid grid-cols-2 sm:grid-cols-3 gap-8">
+                        <div>
+                            <h4 className="text-white font-bold text-sm uppercase tracking-widest mb-6">Product</h4>
+                            <ul className="space-y-4">
+                                {footerLinks.product.map((link) => (
+                                    <li key={link.name}>
+                                        <Link href={link.href} className="text-gray-400 hover:text-blue-400 text-sm transition-colors">{link.name}</Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 className="text-white font-bold text-sm uppercase tracking-widest mb-6">Company</h4>
+                            <ul className="space-y-4">
+                                {footerLinks.company.map((link) => (
+                                    <li key={link.name}>
+                                        <Link href={link.href} className="text-gray-400 hover:text-blue-400 text-sm transition-colors">{link.name}</Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                        <div className="col-span-2 sm:col-span-1">
+                            <h4 className="text-white font-bold text-sm uppercase tracking-widest mb-6">Contact</h4>
+                            <ul className="space-y-4 text-sm text-gray-400">
+                                <li className="flex items-center gap-3">
+                                    <Mail className="w-4 h-4 text-blue-500" />
+                                    <span>devcontact09@gmail.com</span>
+                                </li>
+                                <li className="flex items-center gap-3">
+                                    <MapPin className="w-4 h-4 text-purple-500" />
+                                    <span>Hyderabad, Telangana</span>
+                                </li>
+                                <li className="flex items-center gap-3 mt-6">
+                                    <div className="p-3 bg-blue-500/10 rounded-xl border border-blue-500/20 text-blue-400">
+                                        <GraduationCap className="w-5 h-5" />
+                                    </div>
+                                    <div className="font-medium text-white">Join 50k+ Learners</div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Bottom Bar */}
+                <div className="py-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-6">
+                    <p className="text-xs text-gray-500">
+                        © {currentYear} LearnOrbit. Built for the future of education.
+                    </p>
+                    <div className="flex gap-8">
+                        {footerLinks.resources.slice(1, 3).map((link) => (
+                            <Link key={link.name} href={link.href} className="text-xs text-gray-500 hover:text-white transition-colors">
+                                {link.name}
+                            </Link>
+                        ))}
                     </div>
                 </div>
             </div>

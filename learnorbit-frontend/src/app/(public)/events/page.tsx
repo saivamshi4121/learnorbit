@@ -3,10 +3,12 @@
 import { useState, useEffect } from "react";
 import { get, post, upload } from "@/lib/api";
 import { format } from "date-fns";
-import { Calendar, MapPin, X, CheckCircle, ArrowRight, DollarSign, QrCode, UploadCloud, Info, Upload } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Calendar, MapPin, X, CheckCircle, ArrowRight, DollarSign, QrCode, UploadCloud, Info, Upload, ChevronLeft } from "lucide-react";
 import { toast } from "sonner";
 
 export default function EventsPage() {
+    const router = useRouter();
     const [events, setEvents] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [registeringFor, setRegisteringFor] = useState<any>(null);
@@ -97,13 +99,21 @@ export default function EventsPage() {
     );
 
     return (
-        <div className="min-h-screen bg-gray-50 pt-32 pb-24 px-6">
-            <div className="max-w-5xl mx-auto">
-                <div className="text-center mb-16">
-                    <h1 className="text-4xl md:text-6xl font-black text-gray-900 mb-6 tracking-tight">
+        <div className="min-h-screen bg-gray-50 pt-16 pb-24 px-6">
+            <div className="max-w-5xl mx-auto relative">
+                <button 
+                    onClick={() => router.back()}
+                    className="absolute -top-10 left-0 group flex items-center gap-1.5 text-gray-400 hover:text-blue-600 transition-colors text-xs font-bold uppercase tracking-widest"
+                >
+                    <ChevronLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-0.5" />
+                    <span>Back</span>
+                </button>
+
+                <div className="text-center mb-6">
+                    <h1 className="text-4xl md:text-5xl font-black text-gray-900 mb-2 tracking-tight">
                         Platform <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Events</span>
                     </h1>
-                    <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+                    <p className="text-gray-600 max-w-2xl mx-auto text-sm md:text-base">
                         Explore upcoming webinars, workshops, and meetups. Join our community to learn and grow together.
                     </p>
                 </div>
