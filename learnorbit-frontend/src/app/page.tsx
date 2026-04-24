@@ -18,7 +18,10 @@ import {
   TrendingUp,
   Shield,
   Sparkles,
-  Code2
+  Code2,
+  Terminal,
+  Layout,
+  GraduationCap
 } from "lucide-react";
 import { MarqueeBanner } from "@/components/ui/MarqueeBanner";
 import { Navbar } from "@/components/layout/Navbar";
@@ -467,117 +470,93 @@ function FeaturesSection() {
    COURSES PREVIEW SECTION
    ============================================ */
 function CoursesSection() {
-  const courses = [
-    {
-      title: "React & Next.js Masterclass",
-      description: "Build production-ready apps with the latest React patterns",
-      students: "2,450",
-      hours: "45",
-      level: "Intermediate",
-      gradient: "from-blue-600 to-cyan-500",
-      tag: "Bestseller",
-    },
-    {
-      title: "Node.js Backend Development",
-      description: "APIs, databases, authentication, and deployment",
-      students: "1,890",
-      hours: "38",
-      level: "Beginner",
-      gradient: "from-green-600 to-emerald-500",
-      tag: "New",
-    },
-    {
-      title: "System Design Interview",
-      description: "Design scalable systems and ace your interviews",
-      students: "1,230",
-      hours: "32",
-      level: "Advanced",
-      gradient: "from-purple-600 to-pink-500",
-      tag: "Popular",
-    },
-  ];
-
   return (
-    <section className="py-24 lg:py-32 bg-gray-50">
+    <section className="py-24 lg:py-32 bg-gray-50 relative overflow-hidden">
+      {/* Background Orbs */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-[100px] -z-10" />
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-500/5 rounded-full blur-[100px] -z-10" />
+
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-16">
-          <div>
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="inline-flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full text-sm font-medium text-primary mb-6"
-            >
-              <BookOpen className="h-4 w-4" />
-              Popular Courses
-            </motion.div>
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="text-4xl lg:text-5xl font-bold text-textPrimary tracking-tight"
-            >
-              Start your journey today
-            </motion.h2>
+        <div className="text-center max-w-3xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="inline-flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full text-sm font-medium text-primary mb-6"
+          >
+            <Sparkles className="h-4 w-4" />
+            Exciting Updates Ahead
+          </motion.div>
+          
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="text-4xl lg:text-6xl font-bold text-textPrimary tracking-tight mb-8"
+          >
+            Courses are <span className="bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">Coming Soon.</span>
+          </motion.h2>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="text-xl text-mutedText mb-12"
+          >
+            We are curating high-quality, project-based courses designed by industry experts. 
+            Be the first to know when we launch and get an exclusive early-bird discount.
+          </motion.p>
+
+          {/* Waitlist Form */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 }}
+            className="max-w-md mx-auto mb-20"
+          >
+            <div className="relative group">
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-primary to-purple-600 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-500"></div>
+              <div className="relative flex p-2 bg-white rounded-2xl border border-gray-100 shadow-xl shadow-black/5">
+                <input 
+                  type="email" 
+                  placeholder="Enter your email" 
+                  className="flex-1 px-4 py-3 bg-transparent outline-none text-slate-900 placeholder:text-slate-400"
+                />
+                <button className="bg-slate-900 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-600 transition-colors flex items-center gap-2">
+                  Notify Me <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Feature Preview Cards */}
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              { icon: Terminal, title: "Pro Projects", desc: "Real-world apps you can deploy." },
+              { icon: Layout, title: "System Design", desc: "Architecting for millions of users." },
+              { icon: GraduationCap, title: "Certification", desc: "Industry-recognized credentials." }
+            ].map((card, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.4 + i * 0.1 }}
+                className="bg-white/50 backdrop-blur-sm p-6 rounded-2xl border border-white shadow-sm flex items-center gap-4 text-left"
+              >
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                  <card.icon className="w-6 h-6" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-slate-900">{card.title}</h4>
+                  <p className="text-xs text-slate-500">{card.desc}</p>
+                </div>
+              </motion.div>
+            ))}
           </div>
-          <Link href="/courses">
-            <button className="text-primary font-semibold flex items-center gap-2 hover:gap-3 transition-all">
-              View all courses <ArrowRight className="h-5 w-5" />
-            </button>
-          </Link>
-        </div>
-
-        <div className="grid lg:grid-cols-3 gap-8">
-          {courses.map((course, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
-              className="group bg-white rounded-3xl overflow-hidden border border-gray-100 hover:shadow-2xl hover:shadow-black/10 hover:-translate-y-2 transition-all duration-500"
-            >
-              {/* Image Area */}
-              <div className={`h-48 bg-gradient-to-br ${course.gradient} p-6 relative`}>
-                <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-semibold">
-                  {course.tag}
-                </div>
-                <div className="absolute bottom-6 left-6">
-                  <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-                    <Code2 className="h-7 w-7 text-white" />
-                  </div>
-                </div>
-              </div>
-
-              {/* Content */}
-              <div className="p-6">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded">
-                    {course.level}
-                  </span>
-                </div>
-                <h3 className="text-xl font-bold text-textPrimary mb-2 group-hover:text-primary transition-colors">
-                  {course.title}
-                </h3>
-                <p className="text-mutedText mb-6">{course.description}</p>
-
-                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                  <div className="flex items-center gap-4 text-sm text-mutedText">
-                    <span className="flex items-center gap-1">
-                      <Users className="h-4 w-4" />
-                      {course.students}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Clock className="h-4 w-4" />
-                      {course.hours}h
-                    </span>
-                  </div>
-                  <ChevronRight className="h-5 w-5 text-gray-300 group-hover:text-primary group-hover:translate-x-1 transition-all" />
-                </div>
-              </div>
-            </motion.div>
-          ))}
         </div>
       </div>
     </section>
