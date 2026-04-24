@@ -137,5 +137,6 @@ export function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean, setIsOpen: (va
                 </button>
             </div>
         </aside>
+        </>
     );
 }
