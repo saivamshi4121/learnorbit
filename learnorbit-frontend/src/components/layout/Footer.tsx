@@ -173,6 +173,52 @@ export function Footer() {
                     </div>
                 </div>
 
+                {/* Meet the Developers Section */}
+                <div className="py-12 border-t border-white/5">
+                    <h4 className="text-white font-bold text-sm uppercase tracking-widest mb-8 text-center lg:text-left">Meet the Developers</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Saivamshi */}
+                        <div className="flex items-center gap-4 bg-white/5 p-5 rounded-[2rem] border border-white/10 hover:bg-white/[0.07] hover:border-blue-500/30 transition-all group">
+                             <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center text-white font-black text-2xl shadow-lg shadow-blue-600/20">
+                                S
+                             </div>
+                             <div className="flex-1">
+                                 <div className="flex items-center justify-between mb-0.5">
+                                    <h5 className="text-white font-bold text-base">Saivamshi</h5>
+                                    <Link 
+                                        href="https://www.linkedin.com/in/saivamshi-webdev/" 
+                                        target="_blank" 
+                                        className="p-2 bg-white/5 rounded-full text-gray-400 hover:text-blue-400 hover:bg-blue-400/10 transition-all"
+                                    >
+                                        <Linkedin className="w-4 h-4" />
+                                    </Link>
+                                 </div>
+                                 <p className="text-[11px] text-gray-400 font-medium uppercase tracking-wider">Product Builder & System Architecture</p>
+                             </div>
+                        </div>
+
+                        {/* Ashritha */}
+                        <div className="flex items-center gap-4 bg-white/5 p-5 rounded-[2rem] border border-white/10 hover:bg-white/[0.07] hover:border-purple-500/30 transition-all group">
+                             <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-600 to-indigo-700 flex items-center justify-center text-white font-black text-2xl shadow-lg shadow-purple-600/20">
+                                A
+                             </div>
+                             <div className="flex-1">
+                                 <div className="flex items-center justify-between mb-0.5">
+                                    <h5 className="text-white font-bold text-base">Ashritha</h5>
+                                    <Link 
+                                        href="https://www.linkedin.com/in/ashritha-kattamuri-4768ba281/" 
+                                        target="_blank" 
+                                        className="p-2 bg-white/5 rounded-full text-gray-400 hover:text-purple-400 hover:bg-purple-400/10 transition-all"
+                                    >
+                                        <Linkedin className="w-4 h-4" />
+                                    </Link>
+                                 </div>
+                                 <p className="text-[11px] text-gray-400 font-medium uppercase tracking-wider">Lead AI Engineer & Backend Contributor</p>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+
                 {/* Bottom Bar */}
                 <div className="py-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-6">
                     <p className="text-xs text-gray-500">
