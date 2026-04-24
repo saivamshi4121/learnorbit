@@ -25,6 +25,8 @@ const marketingRoutes = require('./modules/marketing/marketing.routes');
 const instituteRoutes = require('./modules/institute/institute.routes');
 const agentRoutes = require('./modules/agent/agent.routes');
 const aiRoutes = require('./modules/ai/ai.routes');
+const blogsRoutes = require('./modules/blogs/blogs.routes');
+const eventsRoutes = require('./modules/events/events.routes');
 
 const app = express();
 
@@ -88,6 +90,8 @@ app.use('/api/contact', contactRoutes);
 app.use('/api', instituteRoutes);
 app.use('/api/agent', agentRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/blogs', blogsRoutes);
+app.use('/api/events', eventsRoutes);
 
 // 404 handler
 app.use((req, res) => {

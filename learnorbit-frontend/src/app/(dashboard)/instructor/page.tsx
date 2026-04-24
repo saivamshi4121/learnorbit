@@ -3,10 +3,11 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import Link from 'next/link';
 import { formatDistanceToNow } from 'date-fns';
 import {
     ArrowUpDown, ArrowUp, ArrowDown,
-    BookOpen, CheckCircle, File, Users, TrendingUp, LogOut
+    BookOpen, CheckCircle, File, Users, TrendingUp, LogOut, FileText
 } from 'lucide-react';
 
 import { Button } from "@/components/ui/button";
@@ -115,6 +116,12 @@ export default function InstructorDashboard() {
                         </p>
                     </div>
                     <div className="flex items-center gap-3">
+                        <Link href="/dashboard/blogs">
+                            <Button variant="outline" className="gap-2 border-borderLight bg-white">
+                                <FileText className="h-4 w-4" />
+                                Manage Blogs
+                            </Button>
+                        </Link>
                         <Button onClick={() => logout()} variant="outline" className="gap-2">
                             <LogOut className="h-4 w-4" />
                             Logout

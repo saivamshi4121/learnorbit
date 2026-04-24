@@ -100,4 +100,16 @@ export const patch = <T>(url: string, data?: any, config = {}) =>
 export const del = <T>(url: string, config = {}) =>
     api.delete<T>(url, config).then(res => res.data);
 
+// Upload helper for files
+export const upload = <T>(url: string, file: File, config = {}) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return api.post<T>(url, formData, {
+        ...config,
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    }).then(res => res.data);
+};
+
 export default api;

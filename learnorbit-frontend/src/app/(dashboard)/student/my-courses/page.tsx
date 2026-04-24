@@ -36,18 +36,29 @@ export default function MyCoursesPage() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-sky-50/30 to-slate-50 p-6 lg:p-8">
             {/* Header */}
-            <div className="mb-8">
-                <div className="flex items-center gap-3 mb-1">
-                    <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-sky-500 to-blue-600 flex items-center justify-center">
-                        <GraduationCap className="w-4 h-4 text-white" />
+            <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+                <div>
+                    <div className="flex items-center gap-3 mb-1">
+                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-sky-500 to-blue-600 flex items-center justify-center">
+                            <GraduationCap className="w-4 h-4 text-white" />
+                        </div>
+                        <h1 className="text-2xl font-bold text-slate-900">My Courses</h1>
                     </div>
-                    <h1 className="text-2xl font-bold text-slate-900">My Courses</h1>
+                    <p className="text-sm text-slate-500 ml-12">
+                        {courses.length
+                            ? `You have access to ${courses.length} course${courses.length !== 1 ? "s" : ""}`
+                            : "Courses assigned to you will appear here"}
+                    </p>
                 </div>
-                <p className="text-sm text-slate-500 ml-12">
-                    {courses.length
-                        ? `You have access to ${courses.length} course${courses.length !== 1 ? "s" : ""}`
-                        : "Courses assigned to you will appear here"}
-                </p>
+
+                <div className="flex items-center gap-3 md:ml-12">
+                    <Link href="/dashboard/blogs">
+                        <button className="flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 text-slate-700 hover:text-blue-600 hover:border-blue-200 rounded-xl text-sm font-semibold shadow-sm transition-all hover:shadow">
+                            <FileText className="w-4 h-4" />
+                            Manage My Blogs
+                        </button>
+                    </Link>
+                </div>
             </div>
 
             {/* Search */}

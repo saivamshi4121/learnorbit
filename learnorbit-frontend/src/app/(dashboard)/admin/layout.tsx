@@ -3,7 +3,7 @@
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { LayoutDashboard, Users, BookOpen, LogOut, Building2 } from 'lucide-react';
+import { LayoutDashboard, Users, BookOpen, LogOut, Building2, Calendar } from 'lucide-react';
 import { logout, getCurrentUser } from '@/lib/auth';
 import { useEffect, useState } from 'react';
 import CourseAgent from '@/components/dashboard/CourseAgent';
@@ -37,6 +37,7 @@ export default function AdminLayout({
         { name: 'Users', href: '/admin/users', icon: Users },
         { name: 'Courses', href: '/admin/courses', icon: BookOpen },
         ...(userRole === 'super_admin' ? [{ name: 'Institutes', href: '/admin/institutes', icon: Building2 }] : []),
+        { name: 'Events', href: '/admin/events', icon: Calendar },
     ];
 
     return (

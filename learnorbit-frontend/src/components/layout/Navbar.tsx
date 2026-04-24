@@ -35,6 +35,8 @@ export function Navbar() {
         { name: "Courses", href: "/courses" },
         { name: "Mentorship", href: "/mentorship" },
         { name: "Pricing", href: "/pricing" },
+        { name: "Blogs", href: "/blogs" },
+        { name: "Events", href: "/events" },
         { name: "Contact", href: "/contact#contact-form" },
     ];
 

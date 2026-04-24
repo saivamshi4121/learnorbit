@@ -78,3 +78,45 @@ CREATE INDEX IF NOT EXISTS idx_audit_logs_user_id ON audit_logs(user_id);
 CREATE INDEX IF NOT EXISTS idx_audit_logs_event_type ON audit_logs(event_type);
 CREATE INDEX IF NOT EXISTS idx_audit_logs_created_at ON audit_logs(created_at);
 
+--------------------------------
+-- 5️⃣ events
+--------------------------------
+
+CREATE TABLE IF NOT EXISTS events (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  title VARCHAR(255) NOT NULL,
+  description TEXT,
+  date TIMESTAMP NOT NULL,
+  location VARCHAR(255),
+  image_url TEXT,
+  registration_fields JSONB DEFAULT '[]',
+  is_paid BOOLEAN DEFAULT false,
+  price DECIMAL(10, 2) DEFAULT 0.00,
+  qr_code_url TEXT,
+  status VARCHAR(20) DEFAULT 'published' CHECK (status IN ('draft', 'published', 'cancelled')),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+--------------------------------
+-- 6️⃣ event_registrations
+--------------------------------
+
+CREATE TABLE IF NOT EXISTS event_registrations (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  event_id UUID NOT NULL REFERENCES events(id) ON DELETE CASCADE,
+  user_id INT NULL, -- Optional if guest
+  user_name VARCHAR(255),
+  user_email VARCHAR(255),
+  form_data JSONB NOT NULL,
+  payment_screenshot_url TEXT,
+  transaction_id VARCHAR(255),
+  status VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected')),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(event_id, transaction_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_registrations_event_id ON event_registrations(event_id);
+CREATE INDEX IF NOT EXISTS idx_registrations_status ON event_registrations(status);
+

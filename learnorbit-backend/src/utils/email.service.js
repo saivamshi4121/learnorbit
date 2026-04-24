@@ -221,6 +221,74 @@ class EmailService {
     }
   }
 
+  async sendEventStatusEmail({ email, name, eventTitle, status, eventDate, location }) {
+    try {
+      const isApproved = status === 'approved';
+      const subject = isApproved 
+        ? `Confirmed! You're attending ${eventTitle} 🎉` 
+        : `Update regarding your registration for ${eventTitle}`;
+      
+      const body = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+              <style>
+                body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; background-color: #f4f4f5; margin: 0; padding: 0; }
+                .container { max-width: 600px; margin: 40px auto; background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+                .header { background: ${isApproved ? '#10B981' : '#EF4444'}; color: white; padding: 40px 20px; text-align: center; }
+                .content { padding: 40px 30px; }
+                .details { background: #F3F4F6; padding: 20px; border-radius: 12px; margin: 20px 0; }
+                .footer { background: #f8fafc; padding: 20px; text-align: center; font-size: 12px; color: #64748b; border-top: 1px solid #e2e8f0; }
+                h1 { margin: 0; font-size: 24px; font-weight: 800; }
+                .highlight { color: ${isApproved ? '#10B981' : '#EF4444'}; font-weight: 700; }
+              </style>
+            </head>
+            <body>
+              <div class="container">
+                <div class="header">
+                  <h1>${isApproved ? 'Registration Approved!' : 'Registration Update'}</h1>
+                </div>
+                <div class="content">
+                  <p>Hi <span class="highlight">${name}</span>,</p>
+                  <p>
+                    ${isApproved 
+                      ? `We are excited to confirm your registration for <strong>${eventTitle}</strong>! We look forward to seeing you there.` 
+                      : `Thank you for your interest in <strong>${eventTitle}</strong>. Unfortunately, we are unable to approve your registration at this time.`}
+                  </p>
+                  
+                  ${isApproved ? `
+                  <div class="details">
+                    <p style="margin: 0; font-weight: bold; color: #374151;">Event Details:</p>
+                    <p style="margin: 5px 0 0 0;">📅 ${eventDate}</p>
+                    <p style="margin: 5px 0 0 0;">📍 ${location || 'Online'}</p>
+                  </div>
+                  ` : ''}
+                  
+                  <p>If you have any questions, please feel free to reply to this email.</p>
+                  <p>Best regards,<br>The LearnOrbit Team</p>
+                </div>
+                <div class="footer">
+                  <p>&copy; ${new Date().getFullYear()} LearnOrbit. All rights reserved.</p>
+                </div>
+              </div>
+            </body>
+            </html>
+          `;
+
+      await this.transporter.sendMail({
+        from: `"LearnOrbit Events" <${process.env.SMTP_USER}>`,
+        to: email,
+        subject,
+        html: body
+      });
+      logger.info(`Event status (${status}) email sent to ${email}`);
+      return true;
+    } catch (error) {
+      logger.error(`Failed to send event status email: ${error.message}`);
+      return false;
+    }
+  }
+
 }
 
 module.exports = new EmailService();

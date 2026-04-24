@@ -41,12 +41,9 @@ exports.uploadFile = (req, res) => {
         return res.status(400).json({ success: false, error: 'No file uploaded' });
     }
 
-    // Construct URL
-    const protocol = req.protocol;
-    const host = req.get('host');
-    // Assuming frontend can access this URL directly or via proxy
-    // If running locally, host is localhost:5000 (backend). Frontend needs full URL usually.
-    const fileUrl = `${protocol}://${host}/uploads/${req.file.filename}`;
-
+    // Construct URL using BACKEND_URL from env or fallback to request host
+    const backendUrl = process.env.BACKEND_URL || `${req.protocol}://${req.get('host')}`;
+    const fileUrl = `${backendUrl}/uploads/${req.file.filename}`;
+    
     res.json({ success: true, url: fileUrl });
 };
