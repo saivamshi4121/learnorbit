@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Sidebar } from "@/components/dashboard/Sidebar";
 import { DashboardNavbar } from "@/components/dashboard/Navbar";
 import { motion, AnimatePresence } from "framer-motion";
@@ -9,16 +10,18 @@ export default function DashboardLayout({
 }: {
     children: React.ReactNode;
 }) {
+    const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+
     return (
         <div className="min-h-screen bg-slate-50 flex">
             {/* Sidebar component */}
-            <Sidebar />
+            <Sidebar isOpen={isMobileSidebarOpen} setIsOpen={setIsMobileSidebarOpen} />
 
             {/* Main Content Area */}
-            <div className="flex-1 ml-64 flex flex-col transition-all duration-300">
-                <DashboardNavbar />
+            <div className="flex-1 flex flex-col transition-all duration-300 lg:ml-64">
+                <DashboardNavbar onMenuClick={() => setIsMobileSidebarOpen(true)} />
                 
-                <main className="flex-1 p-6 lg:p-10">
+                <main className="flex-1 p-4 lg:p-10">
                     <motion.div
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}

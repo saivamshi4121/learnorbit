@@ -5,7 +5,8 @@ import {
     Bell, 
     MessageSquare, 
     ChevronDown,
-    Command
+    Command,
+    Menu
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -13,7 +14,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { getCurrentUser, User as UserType } from "@/lib/auth";
 
-export function DashboardNavbar() {
+export function DashboardNavbar({ onMenuClick }: { onMenuClick: () => void }) {
     const [user, setUser] = useState<UserType | null>(null);
 
     useEffect(() => {
@@ -21,10 +22,18 @@ export function DashboardNavbar() {
     }, []);
 
     return (
-        <header className="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-md border-b border-slate-100 px-8 py-4">
+        <header className="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-md border-b border-slate-100 px-4 lg:px-8 py-4">
             <div className="flex items-center justify-between gap-4">
+                {/* Mobile Menu Toggle */}
+                <button 
+                    onClick={onMenuClick}
+                    className="p-2 -ml-2 text-slate-600 hover:bg-slate-50 rounded-xl lg:hidden"
+                >
+                    <Menu className="w-6 h-6" />
+                </button>
+
                 {/* Search Bar */}
-                <div className="flex-1 max-w-md relative group">
+                <div className="flex-1 max-w-md relative group hidden sm:flex">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-blue-600 transition-colors" />
                     <input 
                         type="text" 

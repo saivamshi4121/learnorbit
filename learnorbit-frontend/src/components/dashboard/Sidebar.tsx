@@ -16,7 +16,7 @@ import {
     Heart
 } from "lucide-react";
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { logout } from "@/lib/auth";
 
 const menuItems = [
@@ -27,16 +27,31 @@ const menuItems = [
     { name: "Settings", href: "/settings", icon: Settings },
 ];
 
-export function Sidebar() {
+export function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean, setIsOpen: (val: boolean) => void }) {
     const pathname = usePathname();
     const [isCollapsed, setIsCollapsed] = useState(false);
 
     return (
-        <aside 
-            className={`fixed left-0 top-0 h-screen bg-[#020a1a] text-gray-400 transition-all duration-300 z-50 border-r border-white/5 ${
-                isCollapsed ? "w-20" : "w-64"
-            }`}
-        >
+        <>
+            {/* Mobile Overlay */}
+            <AnimatePresence>
+                {isOpen && (
+                    <motion.div 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={() => setIsOpen(false)}
+                        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[45] lg:hidden"
+                    />
+                )}
+            </AnimatePresence>
+
+            <aside 
+                className={`fixed left-0 top-0 h-screen bg-[#020a1a] text-gray-400 transition-all duration-300 z-50 border-r border-white/5 
+                    ${isCollapsed ? "w-20" : "w-64"}
+                    ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
+                `}
+            >
             <div className="flex flex-col h-full">
                 {/* Logo Section */}
                 <div className="p-6 flex items-center justify-between">

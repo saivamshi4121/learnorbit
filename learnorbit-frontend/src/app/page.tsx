@@ -58,7 +58,7 @@ function HeroSection() {
   const y2 = useTransform(scrollY, [0, 500], [0, -150]);
 
   return (
-    <section className="relative min-h-[110vh] flex items-center overflow-hidden">
+    <section className="relative min-h-screen flex items-center overflow-hidden py-20 lg:py-0">
       {/* Animated Background */}
       <div className="absolute inset-0 -z-10">
         {/* Gradient Orbs */}
@@ -113,7 +113,7 @@ function HeroSection() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="text-5xl sm:text-6xl lg:text-7xl font-bold text-textPrimary mb-8 tracking-tight leading-[1.05]"
+              className="text-4xl sm:text-6xl lg:text-7xl font-bold text-textPrimary mb-8 tracking-tight leading-[1.05]"
             >
               Learn to build
               <span className="relative inline-block mx-2">

@@ -42,12 +42,12 @@ export function Navbar() {
 
     return (
         <nav
-            className={`fixed top-[40px] left-0 right-0 z-50 h-18 transition-all duration-300 border-b ${scrolled
+            className={`fixed top-[40px] left-0 right-0 z-50 h-16 lg:h-18 transition-all duration-300 border-b ${scrolled
                 ? "bg-white/80 backdrop-blur-md border-gray-100 shadow-sm"
                 : "bg-white/0 border-transparent"
                 }`}
         >
-            <div className="max-w-7xl mx-auto px-6 lg:px-8 h-full">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
                 <div className="flex items-center justify-between h-full py-2">
 
                     {/* Logo Area */}
@@ -55,9 +55,9 @@ export function Navbar() {
                         <Image
                             src="/learnorbit.png"
                             alt="LearnOrbit"
-                            width={220}
-                            height={62}
-                            className="max-h-full w-auto object-contain group-hover:opacity-90 transition-opacity"
+                            width={180}
+                            height={50}
+                            className="max-h-full w-32 sm:w-44 lg:w-52 h-auto object-contain group-hover:opacity-90 transition-opacity"
                             priority
                         />
                     </Link>
@@ -92,7 +92,7 @@ export function Navbar() {
 
                     {/* Mobile Menu Button */}
                     <button
-                        className="lg:hidden p-2 text-slate-600 hover:text-slate-900 hover:bg-gray-100 rounded-lg transition-colors"
+                        className="lg:hidden p-2 -mr-2 text-slate-600 hover:text-slate-900 hover:bg-gray-100 rounded-lg transition-colors"
                         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                     >
                         {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -102,7 +102,7 @@ export function Navbar() {
 
             {/* Mobile Menu Overlay */}
             <div
-                className={`lg:hidden fixed inset-x-0 top-[70px] bottom-0 bg-white/95 backdrop-blur-xl border-t border-gray-100 transition-all duration-300 ease-in-out origin-top ${mobileMenuOpen ? "opacity-100 scale-y-100" : "opacity-0 scale-y-0 pointer-events-none"
+                className={`lg:hidden fixed inset-x-0 top-[104px] bottom-0 bg-white/95 backdrop-blur-xl border-t border-gray-100 transition-all duration-300 ease-in-out origin-top ${mobileMenuOpen ? "opacity-100 scale-y-100" : "opacity-0 scale-y-0 pointer-events-none"
                     }`}
             >
                 <div className="px-6 py-8 space-y-6 h-full overflow-y-auto">
