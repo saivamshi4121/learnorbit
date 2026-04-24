@@ -80,7 +80,7 @@ export default function AdminDashboard() {
     }
 
     return (
-        <div className="max-w-7xl mx-auto px-6 py-12">
+        <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 sm:py-12">
             {/* Header */}
             <div className="mb-8">
                 <h1 className="text-3xl font-semibold tracking-tight text-gray-900">
@@ -95,7 +95,7 @@ export default function AdminDashboard() {
             <div className="h-px w-full bg-gray-200 mb-10" />
 
             {/* KPI Stat Strip */}
-            <div className="flex flex-wrap gap-px bg-gray-200 border border-gray-200 mb-10">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-px bg-gray-200 border border-gray-200 mb-10 overflow-hidden rounded-lg">
                 <StatItem
                     label="Total Users"
                     value={stats.totalUsers}
@@ -223,14 +223,14 @@ interface StatItemProps {
 
 function StatItem({ label, value, icon: Icon }: StatItemProps) {
     return (
-        <div className="flex-1 min-w-[150px] bg-white px-6 py-8">
-            <div className="flex items-center gap-3 mb-2">
+        <div className="bg-white p-4 sm:px-6 sm:py-8">
+            <div className="flex items-center gap-2 sm:gap-3 mb-2">
                 <Icon className="h-4 w-4 text-gray-400" />
-                <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <p className="text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider truncate">
                     {label}
                 </p>
             </div>
-            <p className="text-3xl font-semibold text-gray-900 tabular-nums">
+            <p className="text-xl sm:text-3xl font-semibold text-gray-900 tabular-nums">
                 {value.toLocaleString()}
             </p>
         </div>
@@ -287,7 +287,7 @@ function MonitoringSection<T>({ title, icon: Icon, items, renderItem, emptyMessa
  */
 function LoadingSkeleton() {
     return (
-        <div className="max-w-7xl mx-auto px-6 py-12">
+        <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 sm:py-12">
             {/* Header skeleton */}
             <div className="mb-8">
                 <div className="h-9 w-64 bg-gray-200 rounded animate-pulse" />
@@ -297,11 +297,11 @@ function LoadingSkeleton() {
             <div className="h-px w-full bg-gray-200 mb-10" />
 
             {/* Stats skeleton */}
-            <div className="flex flex-wrap gap-px bg-gray-200 border border-gray-200">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-px bg-gray-200 border border-gray-200 rounded-lg overflow-hidden">
                 {[1, 2, 3, 4, 5, 6].map((i) => (
-                    <div key={i} className="flex-1 min-w-[150px] bg-white px-6 py-8">
-                        <div className="h-4 w-20 bg-gray-200 rounded mb-3 animate-pulse" />
-                        <div className="h-8 w-24 bg-gray-200 rounded animate-pulse" />
+                    <div key={i} className="bg-white p-4 sm:px-6 sm:py-8">
+                        <div className="h-4 w-16 sm:w-20 bg-gray-200 rounded mb-3 animate-pulse" />
+                        <div className="h-6 sm:h-8 w-16 sm:w-24 bg-gray-200 rounded animate-pulse" />
                     </div>
                 ))}
             </div>

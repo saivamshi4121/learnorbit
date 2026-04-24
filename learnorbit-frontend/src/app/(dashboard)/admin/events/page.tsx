@@ -238,7 +238,7 @@ export default function AdminEventsPage() {
     };
 
     return (
-        <div className="max-w-6xl mx-auto px-6 py-10">
+        <div className="max-w-6xl mx-auto px-4 py-8 sm:px-6 sm:py-10">
             <div className="flex items-center justify-between mb-8">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900">Events & Form Builder</h1>
@@ -454,67 +454,108 @@ export default function AdminEventsPage() {
                         <div className="flex justify-center py-12"><div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div></div>
                     ) : (
                         <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-                            <div className="overflow-x-auto">
-                                <table className="w-full text-left">
-                                    <thead className="bg-gray-50 text-xs font-bold text-gray-500 uppercase tracking-wider">
-                                        <tr>
-                                            <th className="px-6 py-4">User</th>
-                                            <th className="px-6 py-4">Form Data</th>
-                                            <th className="px-6 py-4">Payment</th>
-                                            <th className="px-6 py-4">Status</th>
-                                            <th className="px-6 py-4 text-right">Action</th>
+                        <div className="hidden md:block overflow-x-auto">
+                            <table className="w-full text-left">
+                                <thead className="bg-gray-50 text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                    <tr>
+                                        <th className="px-6 py-4">User</th>
+                                        <th className="px-6 py-4">Form Data</th>
+                                        <th className="px-6 py-4">Payment</th>
+                                        <th className="px-6 py-4">Status</th>
+                                        <th className="px-6 py-4 text-right">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-100">
+                                    {registrations.length === 0 ? (
+                                        <tr><td colSpan={5} className="px-6 py-10 text-center text-gray-500">No registrations yet.</td></tr>
+                                    ) : registrations.map(reg => (
+                                        <tr key={reg.id} className="hover:bg-gray-50">
+                                            <td className="px-6 py-4">
+                                                <div className="font-semibold text-gray-900">{reg.user_name || 'Guest'}</div>
+                                                <div className="text-sm text-gray-500">{reg.user_email || 'N/A'}</div>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <div className="text-xs space-y-1">
+                                                    {Object.entries(reg.form_data || {}).map(([k, v]: any) => (
+                                                        <div key={k}><span className="font-bold">{k}:</span> {v}</div>
+                                                    ))}
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                {reg.transaction_id && (
+                                                    <div className="text-[10px] font-mono text-gray-500 mb-1 bg-gray-100 px-1.5 py-0.5 rounded inline-block">ID: {reg.transaction_id}</div>
+                                                )}
+                                                {reg.payment_screenshot_url ? (
+                                                    <a href={reg.payment_screenshot_url} target="_blank" className="text-blue-600 hover:underline flex items-center gap-1 text-sm font-medium">
+                                                        <Eye className="w-4 h-4" /> View Proof
+                                                    </a>
+                                                ) : <span className="text-gray-400 text-xs italic">No proof</span>}
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${
+                                                    reg.status === 'approved' ? 'bg-green-100 text-green-700' :
+                                                    reg.status === 'rejected' ? 'bg-red-100 text-red-700' :
+                                                    'bg-yellow-100 text-yellow-700'
+                                                }`}>
+                                                    {reg.status}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4 text-right space-x-2">
+                                                <button onClick={() => updateRegStatus(reg.id, 'approved')} className="p-2 text-green-600 hover:bg-green-50 rounded-lg" title="Approve"><Check className="w-4 h-4" /></button>
+                                                <button onClick={() => updateRegStatus(reg.id, 'rejected')} className="p-2 text-red-600 hover:bg-red-50 rounded-lg" title="Reject"><X className="w-4 h-4" /></button>
+                                            </td>
                                         </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-gray-100">
-                                        {registrations.length === 0 ? (
-                                            <tr><td colSpan={5} className="px-6 py-10 text-center text-gray-500">No registrations yet.</td></tr>
-                                        ) : registrations.map(reg => (
-                                            <tr key={reg.id} className="hover:bg-gray-50">
-                                                <td className="px-6 py-4">
-                                                    <div className="font-semibold text-gray-900">{reg.user_name || 'Guest'}</div>
-                                                    <div className="text-sm text-gray-500">{reg.user_email || 'N/A'}</div>
-                                                </td>
-                                                <td className="px-6 py-4">
-                                                    <div className="text-xs space-y-1">
-                                                        {Object.entries(reg.form_data || {}).map(([k, v]: any) => (
-                                                            <div key={k}><span className="font-bold">{k}:</span> {v}</div>
-                                                        ))}
-                                                    </div>
-                                                </td>
-                                                <td className="px-6 py-4">
-                                                    {reg.transaction_id && (
-                                                        <div className="text-[10px] font-mono text-gray-500 mb-1 bg-gray-100 px-1.5 py-0.5 rounded inline-block">ID: {reg.transaction_id}</div>
-                                                    )}
-                                                    {reg.payment_screenshot_url ? (
-                                                        <a href={reg.payment_screenshot_url} target="_blank" className="text-blue-600 hover:underline flex items-center gap-1 text-sm font-medium">
-                                                            <Eye className="w-4 h-4" /> View Proof
-                                                        </a>
-                                                    ) : <span className="text-gray-400 text-xs italic">No proof</span>}
-                                                </td>
-                                                <td className="px-6 py-4">
-                                                    <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${
-                                                        reg.status === 'approved' ? 'bg-green-100 text-green-700' :
-                                                        reg.status === 'rejected' ? 'bg-red-100 text-red-700' :
-                                                        'bg-yellow-100 text-yellow-700'
-                                                    }`}>
-                                                        {reg.status}
-                                                    </span>
-                                                </td>
-                                                <td className="px-6 py-4 text-right space-x-2">
-                                                    <button onClick={() => updateRegStatus(reg.id, 'approved')} className="p-2 text-green-600 hover:bg-green-50 rounded-lg" title="Approve"><Check className="w-4 h-4" /></button>
-                                                    <button onClick={() => updateRegStatus(reg.id, 'rejected')} className="p-2 text-red-600 hover:bg-red-50 rounded-lg" title="Reject"><X className="w-4 h-4" /></button>
-                                                </td>
-                                            </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        {/* Mobile Registrations View */}
+                        <div className="md:hidden divide-y divide-gray-100">
+                            {registrations.length === 0 ? (
+                                <div className="px-6 py-10 text-center text-gray-500">No registrations yet.</div>
+                            ) : registrations.map(reg => (
+                                <div key={reg.id} className="p-4 space-y-4">
+                                    <div className="flex justify-between items-start">
+                                        <div>
+                                            <div className="font-semibold text-gray-900">{reg.user_name || 'Guest'}</div>
+                                            <div className="text-xs text-gray-500">{reg.user_email || 'N/A'}</div>
+                                        </div>
+                                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                                            reg.status === 'approved' ? 'bg-green-100 text-green-700' :
+                                            reg.status === 'rejected' ? 'bg-red-100 text-red-700' :
+                                            'bg-yellow-100 text-yellow-700'
+                                        }`}>
+                                            {reg.status}
+                                        </span>
+                                    </div>
+                                    <div className="bg-gray-50 p-3 rounded-lg text-xs space-y-1">
+                                        {Object.entries(reg.form_data || {}).map(([k, v]: any) => (
+                                            <div key={k}><span className="font-bold">{k}:</span> {v}</div>
                                         ))}
-                                    </tbody>
-                                </table>
-                            </div>
+                                    </div>
+                                    <div className="flex justify-between items-center">
+                                        <div>
+                                            {reg.payment_screenshot_url ? (
+                                                <a href={reg.payment_screenshot_url} target="_blank" className="text-blue-600 hover:underline flex items-center gap-1 text-xs font-medium">
+                                                    <Eye className="w-3.5 h-3.5" /> View Proof
+                                                </a>
+                                            ) : <span className="text-gray-400 text-[10px] italic">No proof</span>}
+                                        </div>
+                                        <div className="flex gap-2">
+                                            <button onClick={() => updateRegStatus(reg.id, 'approved')} className="px-3 py-1.5 bg-green-50 text-green-600 rounded-lg text-xs font-semibold">Approve</button>
+                                            <button onClick={() => updateRegStatus(reg.id, 'rejected')} className="px-3 py-1.5 bg-red-50 text-red-600 rounded-lg text-xs font-semibold">Reject</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                         </div>
                     )}
                 </div>
             ) : (
                 <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-                    <div className="overflow-x-auto">
+                    <div className="hidden md:block overflow-x-auto">
                         <table className="w-full text-left">
                             <thead className="bg-gray-50 text-xs font-bold text-gray-500 uppercase tracking-wider">
                                 <tr>
@@ -569,6 +610,49 @@ export default function AdminEventsPage() {
                                 ))}
                             </tbody>
                         </table>
+                    </div>
+
+                    {/* Mobile Events View */}
+                    <div className="md:hidden divide-y divide-gray-100">
+                        {events.length === 0 ? (
+                            <div className="px-6 py-10 text-center text-gray-500">No events found.</div>
+                        ) : events.map(event => (
+                            <div key={event.id} className="p-4 space-y-3">
+                                <div className="flex justify-between items-start">
+                                    <div className="flex-1 pr-2">
+                                        <div className="font-bold text-gray-900 leading-tight">{event.title}</div>
+                                        <div className="text-xs text-gray-500 mt-1 flex items-center gap-1">
+                                            <Calendar className="w-3 h-3" /> {format(new Date(event.date), 'MMM d, h:mm a')}
+                                        </div>
+                                    </div>
+                                    <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest ${
+                                        event.status === 'upcoming' ? 'bg-green-100 text-green-700' : 
+                                        event.status === 'completed' ? 'bg-gray-100 text-gray-600' :
+                                        'bg-red-100 text-red-700'
+                                    }`}>
+                                        {event.status}
+                                    </span>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    {event.is_paid ? (
+                                        <div className="text-sm text-green-600 font-bold flex items-center gap-1">
+                                            <DollarSign className="w-3.5 h-3.5" /> ₹{event.price}
+                                        </div>
+                                    ) : <span className="text-xs text-blue-600 font-medium">Free</span>}
+                                    <button onClick={() => fetchRegistrations(event.id)} className="text-xs font-semibold text-blue-600 hover:bg-blue-50 px-2 py-1 rounded transition-colors flex items-center gap-1">
+                                        <Users className="w-3 h-3" /> Registrations
+                                    </button>
+                                </div>
+                                <div className="flex justify-end gap-2 pt-2 border-t border-gray-50">
+                                    <button onClick={() => handleEdit(event)} className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg">
+                                        <Edit className="w-4 h-4" />
+                                    </button>
+                                    <button onClick={() => handleDelete(event.id, event.title)} className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg">
+                                        <Trash2 className="w-4 h-4" />
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 </div>
             )}
