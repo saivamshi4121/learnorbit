@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { Sidebar } from "@/components/dashboard/Sidebar";
 import { DashboardNavbar } from "@/components/dashboard/Navbar";
 import { motion, AnimatePresence } from "framer-motion";
@@ -10,7 +11,13 @@ export default function DashboardLayout({
 }: {
     children: React.ReactNode;
 }) {
+    const pathname = usePathname();
     const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+    const isAdmin = pathname?.startsWith('/admin');
+
+    if (isAdmin) {
+        return <>{children}</>;
+    }
 
     return (
         <div className="min-h-screen bg-slate-50 flex">
