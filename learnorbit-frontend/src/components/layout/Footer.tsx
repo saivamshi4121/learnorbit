@@ -39,7 +39,7 @@ export function Footer() {
         company: [
             { name: "About Us", href: "/about" },
             { name: "Careers", href: "/careers" },
-            { name: "Blog", href: "/blog" },
+            { name: "Blog", href: "/blogs" },
             { name: "Contact", href: "/contact" },
         ],
         resources: [

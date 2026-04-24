@@ -11,7 +11,7 @@ import { getAccessToken, clearTokens } from './auth';
 // Create axios instance with base configuration
 export const api = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api',
-    timeout: 30000, // 30 seconds
+    timeout: 60000, // 60 seconds (increased for Render cold starts)
     headers: {
         'Content-Type': 'application/json',
     },
