@@ -54,7 +54,7 @@ export default function RegisterPage() {
                 <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-indigo-400/10 blur-[100px]" />
             </div>
 
-            <div className="w-full max-w-lg z-10 p-4">
+            <div className="w-full max-w-lg z-10 p-4 sm:p-6">
                 {/* Logo Section */}
                 <div className="text-center mb-8">
                     <Link href="/" className="inline-flex items-center justify-center gap-2 group">
@@ -72,7 +72,7 @@ export default function RegisterPage() {
                 </div>
 
                 {/* Card */}
-                <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 p-8 sm:p-10 backdrop-blur-sm animate-in fade-in slide-in-from-bottom-8 duration-700">
+                <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 p-6 sm:p-8 md:p-10 backdrop-blur-sm animate-in fade-in slide-in-from-bottom-8 duration-700">
 
                     <form onSubmit={handleSubmit} className="space-y-5">
                         <div className="space-y-5">
@@ -108,7 +108,7 @@ export default function RegisterPage() {
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label htmlFor="password" className="block text-sm font-semibold text-slate-700 mb-1.5">Password</label>
                                     <div className="relative">

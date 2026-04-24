@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import {
     ArrowLeft, Loader2, Video, FileText, FileImage,
     Link2, Frame, ExternalLink, Globe, UserCheck, Play,
-    BookOpen
+    BookOpen, List, ChevronDown, X, CheckCircle
 } from "lucide-react";
 import { getCourseContent } from "@/lib/services/institute.service";
 import type { CourseContent, InstituteCourse } from "@/lib/services/institute.service";
@@ -47,6 +47,7 @@ export default function StudentCourseContentPage() {
     const [content, setContent] = useState<CourseContent[]>([]);
     const [active, setActive] = useState<CourseContent | null>(null);
     const [loading, setLoading] = useState(true);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     useEffect(() => {
         getCourseContent(courseId)
@@ -91,6 +92,12 @@ export default function StudentCourseContentPage() {
                     <h1 className="text-sm font-semibold text-white truncate">{course.title}</h1>
                     <p className="text-xs text-slate-400">{content.length} items</p>
                 </div>
+                <button 
+                    onClick={() => setIsSidebarOpen(true)}
+                    className="lg:hidden p-2 bg-white/10 rounded-lg text-slate-400 hover:text-white"
+                >
+                    <List className="w-5 h-5" />
+                </button>
             </div>
 
             <div className="flex flex-1 overflow-hidden">
@@ -148,13 +155,13 @@ export default function StudentCourseContentPage() {
                     </div>
                 </div>
 
-                {/* Sidebar: content list */}
+                {/* Sidebar: content list (Desktop) */}
                 <div className="w-72 hidden lg:flex flex-col border-l border-white/10 bg-slate-900/60 overflow-y-auto">
                     <div className="px-4 py-3 border-b border-white/10">
                         <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Course Content</p>
                     </div>
                     <div className="flex-1">
-                        {content.map((item, idx) => {
+                        {content.map((item) => {
                             const ItemIcon = CONTENT_ICONS[item.content_type] || Link2;
                             const isActive = item.id === active.id;
                             return (
@@ -179,6 +186,44 @@ export default function StudentCourseContentPage() {
                         })}
                     </div>
                 </div>
+
+                {/* Mobile Content Overlay / Sidebar */}
+                {isSidebarOpen && (
+                    <div className="fixed inset-0 z-[60] lg:hidden">
+                        <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setIsSidebarOpen(false)} />
+                        <div className="absolute right-0 top-0 bottom-0 w-[85%] max-w-sm bg-slate-900 shadow-2xl flex flex-col animate-in slide-in-from-right duration-300">
+                            <div className="flex items-center justify-between p-4 border-b border-white/10">
+                                <h3 className="font-bold text-white">Course Content</h3>
+                                <button onClick={() => setIsSidebarOpen(false)} className="p-2 text-slate-400"><X className="w-5 h-5" /></button>
+                            </div>
+                            <div className="flex-1 overflow-y-auto">
+                                {content.map((item) => {
+                                    const ItemIcon = CONTENT_ICONS[item.content_type] || Link2;
+                                    const isActive = item.id === active.id;
+                                    return (
+                                        <button
+                                            key={item.id}
+                                            onClick={() => {
+                                                setActive(item);
+                                                setIsSidebarOpen(false);
+                                            }}
+                                            className={`w-full flex items-center gap-4 px-5 py-4 text-left border-b border-white/5 transition-colors ${isActive ? "bg-blue-600/30" : "active:bg-white/5"}`}
+                                        >
+                                            <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${isActive ? "bg-blue-500/40" : "bg-white/10"}`}>
+                                                <ItemIcon className={`w-4 h-4 ${isActive ? "text-blue-400" : "text-slate-400"}`} />
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <p className={`text-sm font-medium truncate ${isActive ? "text-white" : "text-slate-200"}`}>{item.title}</p>
+                                                <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-0.5">{item.content_type}</p>
+                                            </div>
+                                            {isActive && <CheckCircle className="w-4 h-4 text-green-500" />}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
 
             {/* AI Course Agent */}

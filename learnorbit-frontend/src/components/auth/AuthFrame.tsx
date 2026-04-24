@@ -46,7 +46,7 @@ export function AuthFrame({
     };
 
     return (
-        <div className="h-screen overflow-hidden bg-slate-50 flex">
+        <div className="min-h-screen bg-slate-50 flex flex-col lg:flex-row">
             {/* 
         LEFT SIDE: ADVERTISING / PROMO AREA 
         Moved to left side for a more standard "Split Screen" SaaS login look 
@@ -133,7 +133,7 @@ export function AuthFrame({
         RIGHT SIDE: FORM AREA 
         Clean, centered, minimal distraction.
       */}
-            <div className="flex-1 flex flex-col justify-center h-full overflow-y-auto px-4 sm:px-6 lg:px-20 xl:px-24 bg-white/50 relative scrollbar-hide">
+            <div className="flex-1 flex flex-col justify-center min-h-screen lg:h-full overflow-y-auto px-4 sm:px-6 lg:px-20 xl:px-24 bg-white/50 relative scrollbar-hide py-12 lg:py-0">
                 {/* Subtle Background Pattern for Form Area */}
                 <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-30 pointer-events-none" />
 

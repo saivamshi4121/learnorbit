@@ -47,7 +47,7 @@ export default function PricingPage() {
                         </div>
 
                         {/* Headline */}
-                        <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 text-textPrimary animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100">
+                        <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight mb-6 text-textPrimary animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100">
                             Enterprise-Grade Learning. <br />
                             <span className="text-primary">Accessible Pricing.</span>
                         </h1>

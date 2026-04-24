@@ -39,23 +39,23 @@ export default function ProfilePage() {
     if (!user) return null;
 
     return (
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
             {/* Header / Banner */}
-            <div className="relative h-48 rounded-[2rem] bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 overflow-hidden mb-20 shadow-2xl shadow-blue-500/20">
+            <div className="relative h-32 md:h-48 rounded-[2rem] bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 overflow-hidden mb-12 md:mb-20 shadow-2xl shadow-blue-500/20">
                 <div className="absolute inset-0 opacity-20"
                     style={{ backgroundImage: "radial-gradient(circle at 2px 2px, white 1px, transparent 0)", backgroundSize: "32px 32px" }}
                 />
                 
                 {/* Profile Picture Overlay */}
-                <div className="absolute -bottom-16 left-10">
+                <div className="absolute -bottom-12 md:-bottom-16 left-6 md:left-10">
                     <div className="relative group">
-                        <div className="w-32 h-32 rounded-3xl bg-white p-1.5 shadow-xl">
+                        <div className="w-24 h-24 md:w-32 md:h-32 rounded-3xl bg-white p-1.5 shadow-xl">
                             <div className="w-full h-full rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 overflow-hidden">
-                                <User className="w-16 h-16" />
+                                <User className="w-12 h-12 md:w-16 md:h-16" />
                             </div>
                         </div>
-                        <button className="absolute bottom-2 right-2 p-2 bg-blue-600 text-white rounded-xl shadow-lg hover:bg-blue-500 transition-all active:scale-95">
-                            <Camera className="w-4 h-4" />
+                        <button className="absolute bottom-1 right-1 md:bottom-2 md:right-2 p-1.5 md:p-2 bg-blue-600 text-white rounded-xl shadow-lg hover:bg-blue-500 transition-all active:scale-95">
+                            <Camera className="w-3.5 h-3.5 md:w-4 h-4" />
                         </button>
                     </div>
                 </div>
@@ -66,20 +66,20 @@ export default function ProfilePage() {
             </div>
 
             {/* Name and Role */}
-            <div className="mb-10 pl-44">
-                <h1 className="text-3xl font-black text-slate-900 mb-1">{user.name}</h1>
-                <p className="text-slate-500 font-medium flex items-center gap-2">
+            <div className="mb-10 pl-32 md:pl-44">
+                <h1 className="text-xl md:text-3xl font-black text-slate-900 mb-1">{user.name}</h1>
+                <p className="text-[10px] md:text-sm text-slate-500 font-medium flex flex-wrap items-center gap-1.5 md:gap-2">
                     <span className="capitalize">{user.role}</span>
-                    <span className="w-1 h-1 rounded-full bg-slate-300"></span>
-                    <span>{user.email}</span>
+                    <span className="hidden md:block w-1 h-1 rounded-full bg-slate-300"></span>
+                    <span className="break-all">{user.email}</span>
                 </p>
             </div>
 
             {/* Tabs Navigation */}
-            <div className="flex items-center gap-4 mb-8 bg-slate-100/50 p-1.5 rounded-2xl w-fit">
+            <div className="flex items-center gap-2 md:gap-4 mb-8 bg-slate-100/50 p-1 rounded-2xl w-full sm:w-fit overflow-x-auto scrollbar-hide">
                 <button 
                     onClick={() => setActiveTab("profile")}
-                    className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${
+                    className={`flex-1 sm:flex-none px-4 md:px-6 py-2 md:py-2.5 rounded-xl text-xs md:text-sm font-bold whitespace-nowrap transition-all ${
                         activeTab === "profile" 
                         ? "bg-white text-blue-600 shadow-sm" 
                         : "text-slate-500 hover:text-slate-700"
@@ -89,7 +89,7 @@ export default function ProfilePage() {
                 </button>
                 <button 
                     onClick={() => setActiveTab("settings")}
-                    className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${
+                    className={`flex-1 sm:flex-none px-4 md:px-6 py-2 md:py-2.5 rounded-xl text-xs md:text-sm font-bold whitespace-nowrap transition-all ${
                         activeTab === "settings" 
                         ? "bg-white text-blue-600 shadow-sm" 
                         : "text-slate-500 hover:text-slate-700"
@@ -110,9 +110,9 @@ export default function ProfilePage() {
                     >
                         {/* Left Column: Forms */}
                         <div className="md:col-span-2 space-y-6">
-                            <div className="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm">
-                                <h3 className="text-lg font-bold text-slate-900 mb-6">Personal Information</h3>
-                                <div className="grid grid-cols-2 gap-6">
+                            <div className="bg-white p-6 md:p-8 rounded-[2rem] border border-slate-100 shadow-sm">
+                                <h3 className="text-base md:text-lg font-bold text-slate-900 mb-6">Personal Information</h3>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     <div className="space-y-2">
                                         <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Full Name</label>
                                         <input 
@@ -130,7 +130,7 @@ export default function ProfilePage() {
                                             className="w-full px-5 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm opacity-60 cursor-not-allowed"
                                         />
                                     </div>
-                                    <div className="col-span-2 space-y-2">
+                                    <div className="sm:col-span-2 space-y-2">
                                         <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Bio</label>
                                         <textarea 
                                             placeholder="Tell us about yourself..."
@@ -140,16 +140,16 @@ export default function ProfilePage() {
                                 </div>
                             </div>
 
-                            <div className="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm">
-                                <h3 className="text-lg font-bold text-slate-900 mb-6">Social Profiles</h3>
+                            <div className="bg-white p-6 md:p-8 rounded-[2rem] border border-slate-100 shadow-sm">
+                                <h3 className="text-base md:text-lg font-bold text-slate-900 mb-6">Social Profiles</h3>
                                 <div className="space-y-4">
                                     <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                                        <Github className="w-5 h-5 text-slate-600" />
-                                        <input type="text" placeholder="GitHub Username" className="flex-1 bg-transparent text-sm outline-none" />
+                                        <Github className="w-5 h-5 text-slate-600 shrink-0" />
+                                        <input type="text" placeholder="GitHub Username" className="flex-1 bg-transparent text-sm outline-none min-w-0" />
                                     </div>
                                     <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                                        <Linkedin className="w-5 h-5 text-slate-600" />
-                                        <input type="text" placeholder="LinkedIn Profile" className="flex-1 bg-transparent text-sm outline-none" />
+                                        <Linkedin className="w-5 h-5 text-slate-600 shrink-0" />
+                                        <input type="text" placeholder="LinkedIn Profile" className="flex-1 bg-transparent text-sm outline-none min-w-0" />
                                     </div>
                                 </div>
                             </div>
@@ -229,8 +229,8 @@ export default function ProfilePage() {
                             </div>
                         </div>
 
-                        <div className="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm">
-                            <h3 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
+                        <div className="bg-white p-6 md:p-8 rounded-[2rem] border border-slate-100 shadow-sm">
+                            <h3 className="text-base md:text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
                                 <Bell className="w-5 h-5 text-purple-500" />
                                 Notification Preferences
                             </h3>
@@ -241,9 +241,9 @@ export default function ProfilePage() {
                                     "Marketing and promotional emails",
                                     "System updates and maintenance"
                                 ].map((item, idx) => (
-                                    <div key={idx} className="flex items-center justify-between">
-                                        <span className="text-sm text-slate-600">{item}</span>
-                                        <input type="checkbox" defaultChecked className="w-5 h-5 accent-blue-600" />
+                                    <div key={idx} className="flex items-center justify-between gap-4">
+                                        <span className="text-sm text-slate-600 leading-tight">{item}</span>
+                                        <input type="checkbox" defaultChecked className="w-5 h-5 accent-blue-600 shrink-0" />
                                     </div>
                                 ))}
                             </div>

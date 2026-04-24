@@ -71,7 +71,7 @@ export default function ContactPage() {
             <Navbar />
 
             {/* Main Content */}
-            <main className="pt-32 pb-20 px-6 lg:px-8 max-w-7xl mx-auto">
+            <main className="pt-24 sm:pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
 
                 {/* Header Section with Phone Mockup */}
                 <div className="max-w-6xl mx-auto mb-20">
@@ -159,12 +159,12 @@ export default function ContactPage() {
                         <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl -z-10" />
 
                         <div className="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
-                            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-6 sm:p-10 text-white">
+                            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-6 sm:p-8 md:p-10 text-white">
                                 <h2 className="text-2xl font-bold mb-2">Send us a message</h2>
                                 <p className="text-blue-100">Fill out the form below and we'll get back to you as soon as possible.</p>
                             </div>
 
-                            <div className="p-6 sm:p-10">
+                            <div className="p-6 sm:p-8 md:p-10">
                                 {isSuccess ? (
                                     <div className="text-center py-12 space-y-4 animate-in fade-in zoom-in duration-500">
                                         <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto text-green-600">
@@ -183,7 +183,7 @@ export default function ContactPage() {
                                     </div>
                                 ) : (
                                     <form onSubmit={handleSubmit} className="space-y-6">
-                                        <div className="grid grid-cols-2 gap-6">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                             <div className="space-y-2">
                                                 <label htmlFor="firstName" className="text-sm font-medium text-slate-700">First Name</label>
                                                 <input

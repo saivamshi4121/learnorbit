@@ -54,7 +54,7 @@ export default function InstituteDashboardPage() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50 p-6 lg:p-8">
             {/* Header */}
-            <div className="mb-8 flex items-center justify-between">
+            <div className="mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-slate-900">Institute Dashboard</h1>
                     <p className="text-sm text-slate-500 mt-1">Manage your courses, students, and access control</p>

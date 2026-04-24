@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { get } from "@/lib/api";
-import { Calendar, User, ArrowLeft, Clock } from "lucide-react";
+import { Calendar, User, ArrowLeft, Clock, Share2 } from "lucide-react";
+import { toast } from "sonner";
 import { format } from "date-fns";
 import Link from "next/link";
 
@@ -74,6 +75,23 @@ export default function BlogDetailPage() {
                             <Clock className="w-4 h-4" />
                             <span>{readingTime} min read</span>
                         </div>
+                        <button 
+                            onClick={async () => {
+                                const url = window.location.href;
+                                try {
+                                    if (navigator.share) {
+                                        await navigator.share({ title: blog.title, url });
+                                    } else {
+                                        await navigator.clipboard.writeText(url);
+                                        toast.success("Link copied to clipboard!");
+                                    }
+                                } catch (err) { console.error(err); }
+                            }}
+                            className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 font-semibold ml-auto"
+                        >
+                            <Share2 className="w-4 h-4" />
+                            <span>Share</span>
+                        </button>
                     </div>
                 </header>
 
