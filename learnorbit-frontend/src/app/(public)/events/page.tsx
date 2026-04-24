@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { get, post, upload } from "@/lib/api";
 import { format } from "date-fns";
 import { useRouter } from "next/navigation";
-import { Calendar, MapPin, X, CheckCircle, ArrowRight, DollarSign, QrCode, UploadCloud, Info, Upload, ChevronLeft } from "lucide-react";
+import { Calendar, MapPin, X, CheckCircle, ArrowRight, DollarSign, QrCode, UploadCloud, Info, Upload, ChevronLeft, Share2, Copy } from "lucide-react";
 import { toast } from "sonner";
 
 export default function EventsPage() {
@@ -92,6 +92,25 @@ export default function EventsPage() {
         }
     };
 
+    const handleShare = async (event: any) => {
+        const shareData = {
+            title: event.title,
+            text: `Check out this event: ${event.title} on LearnOrbit!`,
+            url: window.location.href, 
+        };
+
+        try {
+            if (navigator.share) {
+                await navigator.share(shareData);
+            } else {
+                await navigator.clipboard.writeText(`${shareData.text} ${shareData.url}`);
+                toast.success("Link copied to clipboard!");
+            }
+        } catch (err) {
+            console.error("Error sharing:", err);
+        }
+    };
+
     if (loading) return (
         <div className="min-h-screen flex items-center justify-center">
             <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
@@ -141,6 +160,18 @@ export default function EventsPage() {
                                         {event.status}
                                     </span>
                                 </div>
+                                <div className="absolute top-4 left-4">
+                                    <button 
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleShare(event);
+                                        }}
+                                        className="p-2 bg-white/90 hover:bg-white text-gray-700 rounded-full backdrop-blur shadow-sm transition-all active:scale-90"
+                                        title="Share Event"
+                                    >
+                                        <Share2 className="w-4 h-4" />
+                                    </button>
+                                </div>
                             </div>
 
                             <div className="p-8 flex-1 flex flex-col">
@@ -169,12 +200,21 @@ export default function EventsPage() {
                                     </div>
                                 </div>
 
-                                <button 
-                                    onClick={() => handleRegisterClick(event)}
-                                    className="w-full mt-auto py-4 bg-gray-900 hover:bg-blue-600 text-white rounded-2xl font-bold transition-all transform active:scale-95 flex items-center justify-center gap-2"
-                                >
-                                    Register Now <ArrowRight className="w-4 h-4" />
-                                </button>
+                                <div className="flex gap-2 mt-auto">
+                                    <button 
+                                        onClick={() => handleRegisterClick(event)}
+                                        className="flex-1 py-4 bg-gray-900 hover:bg-blue-600 text-white rounded-2xl font-bold transition-all transform active:scale-95 flex items-center justify-center gap-2"
+                                    >
+                                        Register Now <ArrowRight className="w-4 h-4" />
+                                    </button>
+                                    <button 
+                                        onClick={() => handleShare(event)}
+                                        className="p-4 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-2xl font-bold transition-all transform active:scale-95 flex items-center justify-center"
+                                        title="Share"
+                                    >
+                                        <Share2 className="w-5 h-5" />
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     ))}
@@ -185,12 +225,21 @@ export default function EventsPage() {
             {registeringFor && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm animate-in fade-in duration-300">
                     <div className="bg-white w-full max-w-3xl rounded-[3rem] shadow-2xl relative animate-in zoom-in-95 duration-300 flex flex-col max-h-[92vh]">
-                        <button 
-                            onClick={() => setRegisteringFor(null)}
-                            className="absolute top-8 right-8 p-3 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors z-30 shadow-sm"
-                        >
-                            <X className="w-6 h-6" />
-                        </button>
+                        <div className="absolute top-8 right-8 flex gap-2 z-30">
+                            <button 
+                                onClick={() => handleShare(registeringFor)}
+                                className="p-3 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors shadow-sm"
+                                title="Share Event"
+                            >
+                                <Share2 className="w-6 h-6" />
+                            </button>
+                            <button 
+                                onClick={() => setRegisteringFor(null)}
+                                className="p-3 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors shadow-sm"
+                            >
+                                <X className="w-6 h-6" />
+                            </button>
+                        </div>
 
                         <div className="overflow-y-auto p-8 md:p-16 custom-scrollbar">
                             {success ? (
