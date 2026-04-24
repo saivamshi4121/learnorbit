@@ -1,4 +1,4 @@
-import { getAllEvents } from "@/lib/services/events.service";
+import { getAllEvents, Event } from "@/lib/services/events.service";
 import EventsClient from "@/components/events/EventsClient";
 import { Metadata } from "next";
 
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 export default async function EventsPage() {
-    let events = [];
+    let events: Event[] = [];
     
     try {
         const res = await getAllEvents();
