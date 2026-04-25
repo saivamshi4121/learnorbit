@@ -295,8 +295,8 @@ export default function AdminEventsPage() {
                                     <input type="text" required value={title} onChange={e => setTitle(e.target.value)} className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" placeholder="e.g. Annual Tech Summit 2024" />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Date & Time *</label>
-                                    <input type="datetime-local" required value={date} onChange={e => setDate(e.target.value)} className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" />
+                                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Date & Time</label>
+                                    <input type="datetime-local" value={date} onChange={e => setDate(e.target.value)} className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" />
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1.5">Location</label>

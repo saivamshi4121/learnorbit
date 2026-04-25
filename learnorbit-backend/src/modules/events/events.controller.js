@@ -5,8 +5,8 @@ exports.createEvent = async (req, res) => {
         const { title, description, date, location, image_url, status, registration_fields, is_paid, price, qr_code_url } = req.body;
         
         // Basic validation
-        if (!title || !date) {
-            return res.status(400).json({ success: false, error: 'Title and date are required' });
+        if (!title) {
+            return res.status(400).json({ success: false, error: 'Event title is required' });
         }
 
         const result = await db.query(
