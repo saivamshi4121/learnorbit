@@ -15,6 +15,11 @@ export default function AdminEventsPage() {
     const [registrations, setRegistrations] = useState<any[]>([]);
     const [regLoading, setRegLoading] = useState(false);
     const [uploading, setUploading] = useState<string | null>(null);
+    
+    // Search and Pagination state
+    const [searchTerm, setSearchTerm] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 20;
 
     // CSV Download helper
     const downloadAttendees = (eventId: string, eventTitle: string, data: any[]) => {
@@ -214,6 +219,8 @@ export default function AdminEventsPage() {
         try {
             setRegLoading(true);
             setViewingRegistrations(eventId);
+            setSearchTerm("");
+            setCurrentPage(1);
             const res = await get<any>(`/events/${eventId}/registrations`);
             if (res.success) {
                 setRegistrations(res.registrations || []);
@@ -224,6 +231,24 @@ export default function AdminEventsPage() {
             setRegLoading(false);
         }
     };
+
+    // Filtered and Paginated Registrations
+    const filteredRegistrations = registrations.filter(reg => {
+        const search = searchTerm.toLowerCase();
+        const nameMatch = (reg.user_name || "").toLowerCase().includes(search);
+        const emailMatch = (reg.user_email || "").toLowerCase().includes(search);
+        const phoneMatch = (reg.user_phone || "").toLowerCase().includes(search);
+        const formDataMatch = Object.values(reg.form_data || {}).some(val => 
+            String(val).toLowerCase().includes(search)
+        );
+        return nameMatch || emailMatch || phoneMatch || formDataMatch;
+    });
+
+    const totalPages = Math.ceil(filteredRegistrations.length / itemsPerPage);
+    const paginatedRegistrations = filteredRegistrations.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
 
     const updateRegStatus = async (regId: string, status: string) => {
         try {
@@ -433,22 +458,43 @@ export default function AdminEventsPage() {
                 </div>
             ) : viewingRegistrations ? (
                 <div className="space-y-6 animate-in fade-in duration-300">
-                    <div className="flex items-center justify-between mb-6">
                         <div className="flex items-center gap-4">
                             <button onClick={() => setViewingRegistrations(null)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
                                 <X className="w-6 h-6" />
                             </button>
                             <h2 className="text-xl font-bold">Registrations for {events.find(e => e.id === viewingRegistrations)?.title}</h2>
                         </div>
-                        {registrations.length > 0 && (
-                            <button 
-                                onClick={() => downloadAttendees(viewingRegistrations!, events.find(e => e.id === viewingRegistrations)?.title, registrations)}
-                                className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-lg shadow-green-500/20"
-                            >
-                                <Download className="w-4 h-4" /> Download Attendee List (CSV)
-                            </button>
-                        )}
-                    </div>
+                        <div className="flex items-center gap-3">
+                            <div className="relative">
+                                <input 
+                                    type="text" 
+                                    placeholder="Search name, email, phone..." 
+                                    value={searchTerm}
+                                    onChange={(e) => {
+                                        setSearchTerm(e.target.value);
+                                        setCurrentPage(1);
+                                    }}
+                                    className="pl-9 pr-10 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 w-72 transition-all outline-none"
+                                />
+                                <Users className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                                {searchTerm && (
+                                    <button 
+                                        onClick={() => setSearchTerm("")}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 hover:bg-gray-100 rounded-full text-gray-400 hover:text-gray-600 transition-colors"
+                                    >
+                                        <X className="w-3.5 h-3.5" />
+                                    </button>
+                                )}
+                            </div>
+                            {registrations.length > 0 && (
+                                <button 
+                                    onClick={() => downloadAttendees(viewingRegistrations!, events.find(e => e.id === viewingRegistrations)?.title, registrations)}
+                                    className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-lg shadow-green-500/20"
+                                >
+                                    <Download className="w-4 h-4" /> CSV
+                                </button>
+                            )}
+                        </div>
 
                     {regLoading ? (
                         <div className="flex justify-center py-12"><div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div></div>
@@ -466,9 +512,9 @@ export default function AdminEventsPage() {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-100">
-                                    {registrations.length === 0 ? (
-                                        <tr><td colSpan={5} className="px-6 py-10 text-center text-gray-500">No registrations yet.</td></tr>
-                                    ) : registrations.map(reg => (
+                                    {paginatedRegistrations.length === 0 ? (
+                                        <tr><td colSpan={5} className="px-6 py-10 text-center text-gray-500">{searchTerm ? 'No results found.' : 'No registrations yet.'}</td></tr>
+                                    ) : paginatedRegistrations.map(reg => (
                                         <tr key={reg.id} className="hover:bg-gray-50">
                                             <td className="px-6 py-4">
                                                 <div className="font-semibold text-gray-900">{reg.user_name || 'Guest'}</div>
@@ -512,9 +558,9 @@ export default function AdminEventsPage() {
 
                         {/* Mobile Registrations View */}
                         <div className="md:hidden divide-y divide-gray-100">
-                            {registrations.length === 0 ? (
-                                <div className="px-6 py-10 text-center text-gray-500">No registrations yet.</div>
-                            ) : registrations.map(reg => (
+                            {paginatedRegistrations.length === 0 ? (
+                                <div className="px-6 py-10 text-center text-gray-500">{searchTerm ? 'No results found.' : 'No registrations yet.'}</div>
+                            ) : paginatedRegistrations.map(reg => (
                                 <div key={reg.id} className="p-4 space-y-4">
                                     <div className="flex justify-between items-start">
                                         <div>
@@ -550,6 +596,42 @@ export default function AdminEventsPage() {
                                 </div>
                             ))}
                         </div>
+                        
+                        {/* Pagination Controls */}
+                        {totalPages > 1 && (
+                            <div className="flex items-center justify-between px-6 py-4 bg-gray-50 border-t border-gray-100">
+                                <p className="text-sm text-gray-500">
+                                    Showing <span className="font-medium">{(currentPage - 1) * itemsPerPage + 1}</span> to <span className="font-medium">{Math.min(currentPage * itemsPerPage, filteredRegistrations.length)}</span> of <span className="font-medium">{filteredRegistrations.length}</span> results
+                                </p>
+                                <div className="flex gap-2">
+                                    <button 
+                                        disabled={currentPage === 1}
+                                        onClick={() => setCurrentPage(prev => prev - 1)}
+                                        className="px-3 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+                                    >
+                                        Previous
+                                    </button>
+                                    <div className="flex items-center gap-1">
+                                        {[...Array(totalPages)].map((_, i) => (
+                                            <button
+                                                key={i}
+                                                onClick={() => setCurrentPage(i + 1)}
+                                                className={`w-8 h-8 rounded text-sm font-medium transition-colors ${currentPage === i + 1 ? 'bg-blue-600 text-white' : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-50'}`}
+                                            >
+                                                {i + 1}
+                                            </button>
+                                        ))}
+                                    </div>
+                                    <button 
+                                        disabled={currentPage === totalPages}
+                                        onClick={() => setCurrentPage(prev => prev + 1)}
+                                        className="px-3 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+                                    >
+                                        Next
+                                    </button>
+                                </div>
+                            </div>
+                        )}
                         </div>
                     )}
                 </div>

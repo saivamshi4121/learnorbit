@@ -19,6 +19,8 @@ export default function RegistrationModal({ event, onClose, handleShare }: Regis
     const [uploading, setUploading] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [success, setSuccess] = useState(false);
+    const [alreadyRegistered, setAlreadyRegistered] = useState(false);
+    const [statusMessage, setStatusMessage] = useState("");
 
     const handleFileUpload = async (file: File) => {
         try {
@@ -56,8 +58,13 @@ export default function RegistrationModal({ event, onClose, handleShare }: Regis
                 toast.success("Registration submitted successfully!");
             }
         } catch (error: any) {
-            const errorMsg = error.response?.data?.error || "";
-            if (errorMsg.includes('DUPLICATE_TRANSACTION')) {
+            const errorData = error.response?.data || {};
+            const errorMsg = errorData.error || "";
+            
+            if (errorMsg === 'ALREADY_REGISTERED') {
+                setAlreadyRegistered(true);
+                setStatusMessage(errorData.message || "You are already registered! 🌟");
+            } else if (errorMsg.includes('DUPLICATE_TRANSACTION')) {
                 toast.error("This Transaction ID has already been used!");
             } else {
                 toast.error("Failed to submit registration");
@@ -99,6 +106,29 @@ export default function RegistrationModal({ event, onClose, handleShare }: Regis
                             </p>
                             <button onClick={onClose} className="px-10 py-4 bg-gray-900 text-white rounded-2xl font-bold">
                                 Got it
+                            </button>
+                        </div>
+                    ) : alreadyRegistered ? (
+                        <div className="text-center py-6 md:py-10 space-y-6 md:space-y-8">
+                            <div className="w-20 h-20 md:w-24 md:h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto">
+                                <QrCode className="w-10 h-10 md:w-12 md:h-12 text-blue-600" />
+                            </div>
+                            <div className="space-y-3">
+                                <h3 className="text-2xl md:text-4xl font-black text-gray-900 leading-tight">Already with us! 🌟</h3>
+                                <p className="text-gray-600 text-base md:text-xl px-2 md:px-4 max-w-lg mx-auto">
+                                    {statusMessage}
+                                </p>
+                            </div>
+                            <div className="bg-blue-50 p-5 md:p-8 rounded-[2rem] md:rounded-[2.5rem] border border-blue-100 mx-auto max-w-lg">
+                                <p className="text-blue-700 text-sm md:text-base font-medium leading-relaxed">
+                                    We have your details securely saved. You'll receive all updates for <span className="font-bold text-blue-800">{event.title}</span> directly in your inbox.
+                                </p>
+                            </div>
+                            <button 
+                                onClick={onClose} 
+                                className="w-full md:w-auto px-10 py-4 md:py-5 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl md:rounded-3xl font-bold text-lg shadow-xl shadow-blue-500/20 transition-all active:scale-95"
+                            >
+                                Perfect, thanks!
                             </button>
                         </div>
                     ) : (

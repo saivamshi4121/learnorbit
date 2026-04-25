@@ -289,6 +289,54 @@ class EmailService {
     }
   }
 
+  async sendAdminRegistrationNotification({ eventTitle, userName, userEmail, userPhone }) {
+    try {
+      const adminEmail = process.env.ADMIN_EMAIL || 'admin@learnorbit.com';
+      const subject = `New Registration: ${eventTitle} 🚀`;
+      const body = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+              <style>
+                body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; }
+                .container { max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 12px; }
+                .header { background: #4F46E5; color: white; padding: 20px; border-radius: 10px 10px 0 0; text-align: center; }
+                .content { padding: 20px; background: #f9fafb; }
+                .label { font-weight: bold; color: #4F46E5; }
+              </style>
+            </head>
+            <body>
+              <div class="container">
+                <div class="header">
+                  <h2 style="margin:0;">New Event Registration! 🚀</h2>
+                </div>
+                <div class="content">
+                  <p><span class="label">Event:</span> ${eventTitle}</p>
+                  <p><span class="label">Name:</span> ${userName || 'Guest'}</p>
+                  <p><span class="label">Email:</span> ${userEmail || 'N/A'}</p>
+                  <p><span class="label">Phone:</span> ${userPhone || 'N/A'}</p>
+                  <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 20px 0;">
+                  <p style="font-size: 12px; color: #6b7280; text-align: center;">
+                    Please log in to the Admin Dashboard to review the payment and details.
+                  </p>
+                </div>
+              </div>
+            </body>
+            </html>
+          `;
+
+      await this.transporter.sendMail({
+        from: `"LearnOrbit System" <${process.env.SMTP_USER}>`,
+        to: adminEmail,
+        subject,
+        html: body
+      });
+      return true;
+    } catch (error) {
+      logger.error(`Failed to send admin event notification: ${error.message}`);
+      return false;
+    }
+  }
 }
 
 module.exports = new EmailService();

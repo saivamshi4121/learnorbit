@@ -1,12 +1,24 @@
 const express = require('express');
+const rateLimit = require('express-rate-limit');
 const router = express.Router();
+
+// Production Rate Limiter: Prevent spam registrations
+const registrationLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // Limit each IP to 10 registrations per 15 mins
+  message: {
+    success: false,
+    error: 'TOO_MANY_REQUESTS',
+    message: "Too many registration attempts. Please try again after 15 minutes."
+  }
+});
 const eventsController = require('./events.controller');
 const registrationsController = require('./registrations.controller');
 const { protect, authorize } = require('../../middlewares/auth.middleware');
 
 // Public routes
 router.get('/', eventsController.getEvents);
-router.post('/register', registrationsController.registerForEvent); // Guest or User can register
+router.post('/register', registrationLimiter, registrationsController.registerForEvent); // Guest or User can register
 
 // Protected routes (Admin / Super Admin only)
 router.use(protect);
