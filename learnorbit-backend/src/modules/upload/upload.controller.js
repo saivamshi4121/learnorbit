@@ -1,11 +1,4 @@
-const { storage } = require('../../config/cloudinary');
-const multer = require('multer');
-
-// Configure upload middleware with Cloudinary storage
-const upload = multer({
-    storage: storage,
-    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
-});
+const { upload, isCloudinaryConfigured } = require('../../config/multer');
 
 exports.uploadMiddleware = upload.single('file');
 
@@ -14,6 +7,21 @@ exports.uploadFile = (req, res) => {
         return res.status(400).json({ success: false, error: 'No file uploaded' });
     }
 
-    // req.file.path will contain the Cloudinary URL automatically
-    res.json({ success: true, url: req.file.path });
+    let fileUrl;
+    
+    if (isCloudinaryConfigured) {
+        // Cloudinary returns the full URL in path
+        fileUrl = req.file.path;
+    } else {
+        // Local storage returns filename or path. 
+        // We want to return a clean relative URL like /uploads/filename
+        const filename = req.file.filename || req.file.path.split(/[\\/]/).pop();
+        fileUrl = `/uploads/${filename}`;
+    }
+
+    res.json({ 
+        success: true, 
+        url: fileUrl,
+        storage: isCloudinaryConfigured ? 'cloudinary' : 'local'
+    });
 };
