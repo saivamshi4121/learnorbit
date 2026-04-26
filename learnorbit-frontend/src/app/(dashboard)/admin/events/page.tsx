@@ -113,7 +113,7 @@ export default function AdminEventsPage() {
     }, []);
 
     // Helper for file uploads
-    const handleFileUpload = async (file: File, type: 'image' | 'qr') => {
+    const handleFileUpload = async (file: File, type: 'image' | 'qr' | 'cert_bg' | 'sponsor') => {
         try {
             setUploading(type);
             const res = await upload<any>('/upload', file);
