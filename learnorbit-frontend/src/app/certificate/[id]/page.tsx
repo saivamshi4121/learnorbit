@@ -191,6 +191,7 @@ export default function CertificatePage() {
                     .min-h-screen { background: white; padding: 0; }
                 }
             `}</style>
+            </div>
         </div>
     );
 }
