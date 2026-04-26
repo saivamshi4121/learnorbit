@@ -52,9 +52,8 @@ const corsOptions = {
   optionsSuccessStatus: 200,
 };
 
-// Handle preflight requests explicitly
+// Handle preflight requests automatically
 app.use(cors(corsOptions));
-app.options('/*', cors(corsOptions));
 
 // Security headers
 app.use(helmet({
