@@ -321,7 +321,7 @@ export default function AdminEventsPage() {
                 </div>
                 <button 
                     onClick={() => { 
-                        if (isCreating) resetForm();
+                        if (isCreating) handleReset();
                         setIsCreating(!isCreating); 
                         setViewingRegistrations(null); 
                     }}
