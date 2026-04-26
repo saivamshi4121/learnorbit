@@ -54,7 +54,7 @@ const corsOptions = {
 
 // Handle preflight requests explicitly
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
+app.options('/*', cors(corsOptions));
 
 // Security headers
 app.use(helmet({
