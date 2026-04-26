@@ -11,7 +11,7 @@ const requestIdMiddleware = require('./middlewares/requestId.middleware');
 const logger = require('./utils/logger');
 const compression = require('compression');
 const rateLimit = require('express-rate-limit');
-const xss = require('xss-clean');
+
 // const redisRateLimiter = require('./middlewares/redisRateLimiter.middleware');
 
 const dashboardRoutes = require('./modules/dashboard/dashboard.routes');
@@ -67,8 +67,7 @@ app.use(cookieParser());
 // Compression for performance
 app.use(compression());
 
-// Data sanitization against XSS
-app.use(xss());
+
 
 // Rate Limiting
 const limiter = rateLimit({
