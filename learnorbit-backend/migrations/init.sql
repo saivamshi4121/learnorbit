@@ -86,13 +86,14 @@ CREATE TABLE IF NOT EXISTS events (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   title VARCHAR(255) NOT NULL,
   description TEXT,
-  date TIMESTAMP NOT NULL,
+  date TIMESTAMP,
   location VARCHAR(255),
   image_url TEXT,
   registration_fields JSONB DEFAULT '[]',
   is_paid BOOLEAN DEFAULT false,
   price DECIMAL(10, 2) DEFAULT 0.00,
   qr_code_url TEXT,
+  certificate_settings JSONB DEFAULT '{}',
   status VARCHAR(20) DEFAULT 'published' CHECK (status IN ('draft', 'published', 'cancelled')),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -119,4 +120,10 @@ CREATE TABLE IF NOT EXISTS event_registrations (
 
 CREATE INDEX IF NOT EXISTS idx_registrations_event_id ON event_registrations(event_id);
 CREATE INDEX IF NOT EXISTS idx_registrations_status ON event_registrations(status);
+
+-- Migration for existing tables (Idempotent)
+ALTER TABLE events ADD COLUMN IF NOT EXISTS certificate_settings JSONB DEFAULT '{}';
+ALTER TABLE events ALTER COLUMN date DROP NOT NULL;
+
+
 

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { post, get, del, patch, upload } from "@/lib/api";
 import { format } from "date-fns";
-import { Calendar, MapPin, Plus, Trash2, Edit, X, Check, Eye, DollarSign, QrCode, ClipboardList, Users, Upload, Download } from "lucide-react";
+import { Calendar, MapPin, Plus, Trash2, Edit, X, Check, Eye, DollarSign, QrCode, ClipboardList, Users, Upload, Download, Award } from "lucide-react";
 import { toast } from "sonner";
 
 export default function AdminEventsPage() {
@@ -86,6 +86,12 @@ export default function AdminEventsPage() {
     const [isPaid, setIsPaid] = useState(false);
     const [price, setPrice] = useState("0");
     const [qrCodeUrl, setQrCodeUrl] = useState("");
+    
+    // Certificate state
+    const [enableCertificates, setEnableCertificates] = useState(false);
+    const [sponsorLogos, setSponsorLogos] = useState<string[]>([]);
+    const [certBackground, setCertBackground] = useState("");
+    const [issuedBy, setIssuedBy] = useState("LearnOrbit Team");
 
     const fetchEvents = async () => {
         try {
@@ -113,7 +119,9 @@ export default function AdminEventsPage() {
             const res = await upload<any>('/upload', file);
             if (res.success) {
                 if (type === 'image') setImageUrl(res.url);
-                else setQrCodeUrl(res.url);
+                else if (type === 'qr') setQrCodeUrl(res.url);
+                else if (type === 'cert_bg') setCertBackground(res.url);
+                else if (type === 'sponsor') setSponsorLogos([...sponsorLogos, res.url]);
                 toast.success("File uploaded successfully");
             }
         } catch (error) {
@@ -150,7 +158,13 @@ export default function AdminEventsPage() {
                 registration_fields: fields,
                 is_paid: isPaid,
                 price: parseFloat(price),
-                qr_code_url: qrCodeUrl
+                qr_code_url: qrCodeUrl,
+                certificate_settings: {
+                    enabled: enableCertificates,
+                    sponsor_logos: sponsorLogos,
+                    background_url: certBackground,
+                    issued_by: issuedBy
+                }
             };
 
             let res;
@@ -164,7 +178,7 @@ export default function AdminEventsPage() {
                 toast.success(editingEvent ? "Event updated successfully" : "Event created successfully");
                 setIsCreating(false);
                 setEditingEvent(null);
-                resetForm();
+                handleReset();
                 fetchEvents();
             }
         } catch (err) {
@@ -200,15 +214,39 @@ export default function AdminEventsPage() {
         setIsPaid(event.is_paid);
         setPrice(event.price.toString());
         setQrCodeUrl(event.qr_code_url || "");
+        
+        // Load certificate settings
+        const certs = event.certificate_settings || {};
+        setEnableCertificates(certs.enabled || false);
+        setSponsorLogos(certs.sponsor_logos || []);
+        setCertBackground(certs.background_url || "");
+        setIssuedBy(certs.issued_by || "LearnOrbit Team");
+        
         setIsCreating(true);
         setViewingRegistrations(null);
     };
 
-    const resetForm = () => {
+    const handleReset = () => {
         setTitle(""); setDescription(""); setDate(""); setLocation(""); setImageUrl(""); setStatus("upcoming");
         setFields([{ label: "Full Name", type: "text", required: true }, { label: "Email Address", type: "email", required: true }]);
         setIsPaid(false); setPrice("0"); setQrCodeUrl("");
+        setEnableCertificates(false); setSponsorLogos([]); setCertBackground(""); setIssuedBy("LearnOrbit Team");
         setEditingEvent(null);
+    };
+
+    const sendCertificates = async (eventId: string, title: string) => {
+        if (!confirm(`Are you sure you want to send certificates to all approved participants for "${title}"? This will trigger an automated email blast.`)) return;
+        
+        try {
+            toast.promise(post(`/events/${eventId}/send-certificates`, {}), {
+                loading: 'Triggering certificate delivery...',
+                success: (data: any) => data.message || 'Delivery triggered successfully!',
+                error: (err) => err.message || 'Failed to trigger delivery'
+            });
+        } catch (error) {
+            console.error("Failed to send certificates:", error);
+            toast.error("An error occurred");
+        }
     };
 
     const handleDelete = async (id: string, eventTitle: string) => {
@@ -458,8 +496,70 @@ export default function AdminEventsPage() {
                             </div>
                         </div>
 
+                        {/* Section 4: Certificate Settings */}
+                        <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+                            <h2 className="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
+                                <ClipboardList className="w-5 h-5 text-indigo-600" /> Certificate Generation
+                            </h2>
+                            <div className="space-y-6">
+                                <div className="flex items-center gap-3 p-4 bg-indigo-50 rounded-xl border border-indigo-100">
+                                    <input type="checkbox" checked={enableCertificates} onChange={e => setEnableCertificates(e.target.checked)} className="w-5 h-5 text-indigo-600 rounded" id="enableCertificates" />
+                                    <label htmlFor="enableCertificates" className="font-semibold text-indigo-800">Issue Certificates for this Event</label>
+                                </div>
+                                
+                                {enableCertificates && (
+                                    <div className="space-y-6 animate-in slide-in-from-top-2 duration-200">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1.5">Issued By / Signature Name</label>
+                                            <input type="text" value={issuedBy} onChange={e => setIssuedBy(e.target.value)} className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500" placeholder="e.g. Program Director" />
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1.5">Sponsor Logos (Optional)</label>
+                                            <div className="flex flex-wrap gap-4 mb-3">
+                                                {sponsorLogos.map((url, idx) => (
+                                                    <div key={idx} className="relative w-16 h-16 rounded-lg border border-gray-200 overflow-hidden group">
+                                                        <img src={url} className="w-full h-full object-contain" alt="Sponsor" />
+                                                        <button 
+                                                            type="button" 
+                                                            onClick={() => setSponsorLogos(sponsorLogos.filter((_, i) => i !== idx))}
+                                                            className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity"
+                                                        >
+                                                            <X className="w-4 h-4 text-white" />
+                                                        </button>
+                                                    </div>
+                                                ))}
+                                                <label className="w-16 h-16 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 transition-all">
+                                                    <Plus className="w-5 h-5 text-gray-400" />
+                                                    <input type="file" className="hidden" accept="image/*" onChange={e => e.target.files?.[0] && handleFileUpload(e.target.files[0], 'sponsor')} />
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1.5">Custom Background (Optional)</label>
+                                            <div className="flex items-center gap-4">
+                                                <div className="flex-1">
+                                                    <label className="flex items-center justify-center gap-2 w-full px-4 py-2.5 border-2 border-dashed border-gray-300 rounded-xl hover:border-indigo-500 hover:bg-indigo-50 cursor-pointer transition-all">
+                                                        <Upload className="w-5 h-5 text-gray-400" />
+                                                        <span className="text-sm font-medium text-gray-600">{certBackground ? 'Change Background' : 'Upload Template BG'}</span>
+                                                        <input type="file" className="hidden" accept="image/*" onChange={e => e.target.files?.[0] && handleFileUpload(e.target.files[0], 'cert_bg')} />
+                                                    </label>
+                                                </div>
+                                                {certBackground && (
+                                                    <div className="w-16 h-12 rounded border border-gray-200 overflow-hidden">
+                                                        <img src={certBackground} className="w-full h-full object-cover" alt="BG Preview" />
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
                         <div className="flex justify-end gap-4">
-                            <button type="button" onClick={() => { setIsCreating(false); resetForm(); }} className="px-8 py-3 text-gray-600 font-semibold hover:bg-gray-100 rounded-xl transition-colors">
+                            <button type="button" onClick={() => { setIsCreating(false); handleReset(); }} className="px-8 py-3 text-gray-600 font-semibold hover:bg-gray-100 rounded-xl transition-colors">
                                 Cancel
                             </button>
                             <button type="submit" className="px-10 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/30 transition-all transform active:scale-95">
@@ -558,7 +658,7 @@ export default function AdminEventsPage() {
                                                     {reg.status}
                                                 </span>
                                             </td>
-                                            <td className="px-6 py-4 text-right space-x-2">
+                                            <td className="px-6 py-4 text-right space-x-2 flex items-center justify-end">
                                                 <button onClick={() => updateRegStatus(reg.id, 'approved')} className="p-2 text-green-600 hover:bg-green-50 rounded-lg" title="Approve"><Check className="w-4 h-4" /></button>
                                                 <button onClick={() => updateRegStatus(reg.id, 'rejected')} className="p-2 text-red-600 hover:bg-red-50 rounded-lg" title="Reject"><X className="w-4 h-4" /></button>
                                             </td>
@@ -692,7 +792,16 @@ export default function AdminEventsPage() {
                                                 {event.status}
                                             </span>
                                         </td>
-                                        <td className="px-6 py-4 text-right space-x-2">
+                                        <td className="px-6 py-4 text-right space-x-2 flex items-center justify-end">
+                                            {event.certificate_settings?.enabled && (
+                                                <button 
+                                                    onClick={() => sendCertificates(event.id, event.title)} 
+                                                    className="p-2 text-indigo-500 hover:text-indigo-700 hover:bg-indigo-50 rounded-lg transition-colors"
+                                                    title="Send Certificates to All"
+                                                >
+                                                    <Award className="w-4 h-4" />
+                                                </button>
+                                            )}
                                             <button onClick={() => handleEdit(event)} className="p-2 text-blue-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
                                                 <Edit className="w-4 h-4" />
                                             </button>
@@ -737,7 +846,12 @@ export default function AdminEventsPage() {
                                         <Users className="w-3 h-3" /> Registrations
                                     </button>
                                 </div>
-                                <div className="flex justify-end gap-2 pt-2 border-t border-gray-50">
+                                <div className="flex justify-end gap-2 pt-2 border-t border-gray-50 items-center">
+                                    {event.certificate_settings?.enabled && (
+                                        <button onClick={() => sendCertificates(event.id, event.title)} className="px-3 py-1.5 text-indigo-600 bg-indigo-50 rounded-lg text-xs font-bold flex items-center gap-1">
+                                            <Award className="w-3.5 h-3.5" /> Send All Certs
+                                        </button>
+                                    )}
                                     <button onClick={() => handleEdit(event)} className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg">
                                         <Edit className="w-4 h-4" />
                                     </button>

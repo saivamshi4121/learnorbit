@@ -98,6 +98,7 @@ function HeroSection() {
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
+            className="flex flex-col items-center lg:items-start text-center lg:text-left"
           >
             {/* Badge */}
             <motion.div
@@ -146,11 +147,11 @@ function HeroSection() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.8 }}
-              className="flex flex-col sm:flex-row items-start gap-4 mb-12"
+              className="flex flex-col sm:flex-row items-center lg:items-start gap-4 mb-12 w-full lg:w-auto"
             >
-              <Link href="/courses">
-                <button className="group relative bg-textPrimary text-white px-8 py-4 rounded-full text-lg font-semibold overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-black/20 hover:-translate-y-1">
-                  <span className="relative z-10 flex items-center gap-2">
+              <Link href="/courses" className="w-full sm:w-auto">
+                <button className="w-full group relative bg-textPrimary text-white px-8 py-4 rounded-full text-lg font-semibold overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-black/20 hover:-translate-y-1">
+                  <span className="relative z-10 flex items-center justify-center gap-2">
                     Start Learning Free
                     <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
                   </span>
@@ -169,20 +170,20 @@ function HeroSection() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 1 }}
-              className="flex items-center gap-6"
+              className="flex flex-col sm:flex-row items-center lg:items-start gap-6 text-center lg:text-left"
             >
               <div className="flex -space-x-3">
                 {[1, 2, 3, 4, 5].map((i) => (
                   <div
                     key={i}
-                    className="w-10 h-10 rounded-full border-2 border-white bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center text-xs font-bold text-gray-600"
+                    className="w-10 h-10 rounded-full border-2 border-white bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center text-xs font-bold text-gray-600 shadow-sm"
                   >
                     {String.fromCharCode(64 + i)}
                   </div>
                 ))}
               </div>
               <div>
-                <div className="flex items-center gap-1 mb-1">
+                <div className="flex items-center justify-center lg:justify-start gap-1 mb-1">
                   {[1, 2, 3, 4, 5].map((i) => (
                     <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                   ))}

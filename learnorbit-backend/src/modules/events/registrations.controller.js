@@ -186,3 +186,61 @@ exports.updateRegistrationStatus = async (req, res) => {
         res.status(500).json({ success: false, error: 'Server error updating status' });
     }
 };
+
+exports.getRegistrationDetailsForCertificate = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const regResult = await db.query('SELECT * FROM event_registrations WHERE id = $1', [id]);
+        
+        if (regResult.rows.length === 0) {
+            return res.status(404).json({ success: false, error: 'Registration not found' });
+        }
+        
+        const registration = regResult.rows[0];
+        
+        // Security check: Only allow approved registrations to see certificate
+        if (registration.status !== 'approved') {
+            return res.status(403).json({ success: false, error: 'Registration not approved' });
+        }
+        
+        const eventResult = await db.query('SELECT * FROM events WHERE id = $1', [registration.event_id]);
+        const event = eventResult.rows[0];
+        
+        // Check if certificates are enabled
+        if (!event.certificate_settings || !event.certificate_settings.enabled) {
+            return res.status(403).json({ success: false, error: 'Certificates not enabled for this event' });
+        }
+        
+        res.status(200).json({ 
+            success: true, 
+            data: {
+                registration,
+                event
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching registration details for certificate:', error);
+        res.status(500).json({ success: false, error: 'Server error' });
+    }
+};
+
+exports.getMyRegistrations = async (req, res) => {
+    try {
+        const user_id = req.user.id;
+        const user_email = req.user.email;
+        
+        const result = await db.query(
+            `SELECT er.*, e.title as event_title, e.date as event_date, e.certificate_settings
+             FROM event_registrations er
+             JOIN events e ON er.event_id = e.id
+             WHERE er.user_id = $1 OR er.user_email = $2
+             ORDER BY er.created_at DESC`,
+            [user_id, user_email]
+        );
+        
+        res.status(200).json({ success: true, registrations: result.rows });
+    } catch (error) {
+        console.error('Error fetching user registrations:', error);
+        res.status(500).json({ success: false, error: 'Server error' });
+    }
+};

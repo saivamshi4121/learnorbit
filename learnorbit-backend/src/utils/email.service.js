@@ -337,6 +337,130 @@ class EmailService {
       return false;
     }
   }
+
+
+  async sendBulkCertificates({ eventTitle, registrations, certificateSettings }) {
+    try {
+      const results = { success: 0, failed: 0 };
+      
+      for (const reg of registrations) {
+        try {
+          const email = reg.user_email || reg.form_data?.email || reg.form_data?.Email || reg.form_data?.['Email Address'];
+          const name = reg.user_name || reg.form_data?.name || reg.form_data?.['Full Name'] || reg.form_data?.['Name'];
+          
+          if (!email) {
+            logger.warn(`No email found for registration ${reg.id}`);
+            results.failed++;
+            continue;
+          }
+
+          const certificateBody = this._generateCertificateHtml({
+            name: name || 'Participant',
+            eventTitle,
+            college: reg.form_data?.['College Name'] || reg.form_data?.college || 'N/A',
+            branch: reg.form_data?.Branch || reg.form_data?.branch || 'N/A',
+            year: reg.form_data?.Year || reg.form_data?.year || 'N/A',
+            issuedBy: certificateSettings.issued_by || 'LearnOrbit Team',
+            sponsorLogos: certificateSettings.sponsor_logos || []
+          });
+
+          await this.transporter.sendMail({
+            from: `"LearnOrbit Events" <${process.env.SMTP_USER}>`,
+            to: email,
+            subject: `Certificate of Participation: ${eventTitle} 🎓`,
+            html: certificateBody
+          });
+          
+          results.success++;
+        } catch (err) {
+          logger.error(`Failed to send certificate to registration ${reg.id}: ${err.message}`);
+          results.failed++;
+        }
+      }
+      return results;
+    } catch (error) {
+      logger.error('Error in sendBulkCertificates', error);
+      return { success: 0, failed: registrations.length };
+    }
+  }
+
+  _generateCertificateHtml({ name, eventTitle, college, branch, year, issuedBy, sponsorLogos }) {
+    const sponsorsHtml = sponsorLogos.map(logo => `<img src="${logo}" style="height: 40px; margin: 0 10px; opacity: 0.8;" />`).join('');
+    
+    return `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <style>
+          .cert-container { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            width: 800px;
+            margin: 0 auto;
+            padding: 40px;
+            border: 20px solid #4F46E5;
+            background: white;
+            text-align: center;
+            position: relative;
+          }
+          .logo { height: 60px; margin-bottom: 20px; }
+          .title { color: #4F46E5; font-size: 14px; font-weight: bold; text-transform: uppercase; letter-spacing: 4px; margin-bottom: 30px; }
+          .name { font-size: 42px; font-weight: 900; color: #111827; margin: 20px 0; border-bottom: 2px solid #E5E7EB; display: inline-block; padding: 0 40px; }
+          .context { font-size: 18px; color: #4B5563; line-height: 1.6; margin: 20px 0; }
+          .event-name { font-size: 28px; font-weight: 800; color: #4F46E5; margin: 20px 0; }
+          .footer { margin-top: 50px; display: table; width: 100%; }
+          .footer-col { display: table-cell; vertical-align: bottom; }
+          .signature { border-top: 2px solid #111827; width: 200px; margin: 0 auto; padding-top: 10px; font-weight: bold; }
+          .sponsors { margin-top: 30px; }
+        </style>
+      </head>
+      <body>
+        <div class="cert-container">
+          <div style="text-align: left; margin-bottom: 30px;">
+            <img src="https://cdn-icons-png.flaticon.com/512/3135/3135664.png" style="height: 40px;" />
+            <span style="font-size: 20px; font-weight: 900; color: #111827; vertical-align: middle; margin-left: 10px;">LearnOrbit</span>
+          </div>
+
+          <div class="title">Certificate of Participation</div>
+          
+          <div class="context">This is to certify that</div>
+          
+          <div class="name">${name}</div>
+          
+          <div class="context">
+            of <strong>${college}</strong>, studying <strong>${branch}</strong> (${year} Year),<br>
+            has successfully participated in the event
+          </div>
+          
+          <div class="event-name">${eventTitle}</div>
+          
+          <div class="context" style="font-size: 14px; color: #9CA3AF;">
+            Issued on ${new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
+          </div>
+
+          <div class="footer">
+            <div class="footer-col" style="text-align: left;">
+               <div class="signature">${issuedBy}</div>
+               <div style="font-size: 12px; color: #6B7280; margin-top: 5px;">Authorized Signatory</div>
+            </div>
+            <div class="footer-col" style="text-align: right;">
+                <div class="sponsors">
+                  ${sponsorsHtml}
+                </div>
+            </div>
+          </div>
+          
+          <div style="margin-top: 40px; font-size: 10px; color: #D1D5DB; text-align: center;">
+            Verification ID: ${Math.random().toString(36).substring(2, 10).toUpperCase()}
+          </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 20px;">
+          <p style="font-size: 14px; color: #6B7280;">Tip: You can print this email or save it as a PDF for your records.</p>
+        </div>
+      </body>
+      </html>
+    `;
+  }
 }
 
 module.exports = new EmailService();

@@ -19,12 +19,15 @@ const { protect, authorize } = require('../../middlewares/auth.middleware');
 // Public routes
 router.get('/', eventsController.getEvents);
 router.post('/register', registrationLimiter, registrationsController.registerForEvent); // Guest or User can register
+router.get('/registrations/my', protect, registrationsController.getMyRegistrations); // User's own registrations
+router.get('/registrations/:id/details', registrationsController.getRegistrationDetailsForCertificate); // For certificate generation
 
 // Protected routes (Admin / Super Admin only)
 router.use(protect);
 router.post('/', eventsController.createEvent);
 router.patch('/:id', eventsController.updateEvent);
 router.delete('/:id', eventsController.deleteEvent);
+router.post('/:id/send-certificates', eventsController.sendEventCertificates);
 
 // Admin registration management
 router.get('/:event_id/registrations', registrationsController.getRegistrationsForEvent);

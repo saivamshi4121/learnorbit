@@ -13,7 +13,8 @@ import {
     Globe,
     CheckCircle,
     AlertCircle,
-    Save
+    Save,
+    Award
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getCurrentUser, User as UserType } from "@/lib/auth";
@@ -21,12 +22,30 @@ import { toast } from "sonner";
 
 export default function ProfilePage() {
     const [user, setUser] = useState<UserType | null>(null);
-    const [activeTab, setActiveTab] = useState<"profile" | "settings">("profile");
+    const [activeTab, setActiveTab] = useState<"profile" | "settings" | "events">("profile");
+    const [registrations, setRegistrations] = useState<any[]>([]);
+    const [loadingEvents, setLoadingEvents] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
 
     useEffect(() => {
         setUser(getCurrentUser());
+        fetchMyEvents();
     }, []);
+
+    const fetchMyEvents = async () => {
+        try {
+            setLoadingEvents(true);
+            const { get } = await import("@/lib/api");
+            const res = await get<any>('/events/registrations/my');
+            if (res.success) {
+                setRegistrations(res.registrations || []);
+            }
+        } catch (err) {
+            console.error("Failed to fetch my events:", err);
+        } finally {
+            setLoadingEvents(false);
+        }
+    };
 
     const handleSave = () => {
         setIsSaving(true);
@@ -96,6 +115,16 @@ export default function ProfilePage() {
                     }`}
                 >
                     General Settings
+                </button>
+                <button 
+                    onClick={() => setActiveTab("events")}
+                    className={`flex-1 sm:flex-none px-4 md:px-6 py-2 md:py-2.5 rounded-xl text-xs md:text-sm font-bold whitespace-nowrap transition-all ${
+                        activeTab === "events" 
+                        ? "bg-white text-blue-600 shadow-sm" 
+                        : "text-slate-500 hover:text-slate-700"
+                    }`}
+                >
+                    Event Participations
                 </button>
             </div>
 
@@ -200,6 +229,55 @@ export default function ProfilePage() {
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </motion.div>
+                ) : activeTab === "events" ? (
+                    <motion.div 
+                        key="events"
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        className="space-y-6"
+                    >
+                        <div className="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm">
+                            <h3 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
+                                <Shield className="w-5 h-5 text-indigo-500" />
+                                My Event Certifications
+                            </h3>
+                            
+                            {loadingEvents ? (
+                                <div className="flex justify-center py-10"><div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div></div>
+                            ) : registrations.length === 0 ? (
+                                <div className="text-center py-10">
+                                    <p className="text-slate-500">You haven't participated in any events yet.</p>
+                                </div>
+                            ) : (
+                                <div className="space-y-4">
+                                    {registrations.map((reg) => (
+                                        <div key={reg.id} className="flex items-center justify-between p-6 bg-slate-50 rounded-2xl border border-slate-100 hover:border-blue-200 transition-all">
+                                            <div>
+                                                <h4 className="font-bold text-slate-900">{reg.event_title}</h4>
+                                                <p className="text-xs text-slate-500 mt-1 flex items-center gap-2">
+                                                    <span>{new Date(reg.created_at).toLocaleDateString()}</span>
+                                                    <span className="w-1 h-1 rounded-full bg-slate-300"></span>
+                                                    <span className={`capitalize font-bold ${
+                                                        reg.status === 'approved' ? 'text-green-600' : 
+                                                        reg.status === 'rejected' ? 'text-red-600' : 'text-amber-600'
+                                                    }`}>{reg.status}</span>
+                                                </p>
+                                            </div>
+                                            {reg.status === 'approved' && reg.certificate_settings?.enabled && (
+                                                <div className="flex flex-col items-end gap-1">
+                                                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Shared via Email</span>
+                                                    <div className="px-4 py-1.5 bg-indigo-50 text-indigo-600 rounded-lg text-xs font-bold border border-indigo-100 flex items-center gap-1.5">
+                                                        <Award className="w-3.5 h-3.5" /> Issued
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     </motion.div>
                 ) : (

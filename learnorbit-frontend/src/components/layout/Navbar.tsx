@@ -55,9 +55,9 @@ export function Navbar() {
         <>
             {/* Main Desktop/Mobile Navbar */}
             <nav
-                className={`fixed top-[40px] left-0 right-0 z-[100] h-16 lg:h-18 transition-all duration-300 border-b ${scrolled
-                    ? "bg-white/90 backdrop-blur-md border-gray-100 shadow-sm"
-                    : "bg-white/0 border-transparent"
+                className={`fixed left-0 right-0 z-[100] h-16 lg:h-18 transition-all duration-500 border-b ${scrolled
+                    ? "top-0 bg-white/95 backdrop-blur-md border-gray-100 shadow-md"
+                    : "top-[40px] bg-white/0 border-transparent"
                     }`}
             >
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">

@@ -270,36 +270,5 @@ export default function ContactPage() {
                 </div>
             </main>
 
-            {/* Footer (Simplified) */}
-            <footer className="bg-slate-900 text-slate-400 py-12 border-t border-slate-800">
-                <div className="max-w-7xl mx-auto px-6 lg:px-8 text-center sm:text-left grid sm:grid-cols-4 gap-8">
-                    <div className="sm:col-span-2">
-                        <h3 className="text-white text-lg font-bold mb-4 flex items-center gap-2 justify-center sm:justify-start">
-                            <Globe className="w-5 h-5" />
-                            LearnOrbit
-                        </h3>
-                        <p className="text-sm max-w-xs mx-auto sm:mx-0">
-                            Structured learning for developers who want to build real products and advance their careers.
-                        </p>
-                    </div>
-                    <div>
-                        <h4 className="text-white font-medium mb-3">Company</h4>
-                        <ul className="space-y-2 text-sm">
-                            <li><a href="#" className="hover:text-white transition-colors">About Us</a></li>
-                            <li><a href="#" className="hover:text-white transition-colors">Careers</a></li>
-                            <li><Link href="/contact" className="hover:text-white transition-colors">Contact</Link></li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4 className="text-white font-medium mb-3">Resources</h4>
-                        <ul className="space-y-2 text-sm">
-                            <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
-                            <li><a href="#" className="hover:text-white transition-colors">Community</a></li>
-                            <li><a href="#" className="hover:text-white transition-colors">Help Center</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </footer>
-        </div>
     );
 }

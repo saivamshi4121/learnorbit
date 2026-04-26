@@ -9,6 +9,9 @@ const path = require('path');
 
 const requestIdMiddleware = require('./middlewares/requestId.middleware');
 const logger = require('./utils/logger');
+const compression = require('compression');
+const rateLimit = require('express-rate-limit');
+const xss = require('xss-clean');
 // const redisRateLimiter = require('./middlewares/redisRateLimiter.middleware');
 
 const dashboardRoutes = require('./modules/dashboard/dashboard.routes');
@@ -38,16 +41,51 @@ app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" } // implementation for serving static images to frontend
 }));
 
-// CORS configuration – origin from .env or fallback to '*'
+// Body parser & cookie parser
+app.use(express.json({ limit: '10kb' })); // Limit body size
+app.use(cookieParser());
+
+// Compression for performance
+app.use(compression());
+
+// Data sanitization against XSS
+app.use(xss());
+
+// CORS configuration – origin from .env or fallback
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  'http://localhost:3000',
+  'https://learnorbit.vercel.app', // Adding a likely production URL
+].filter(Boolean);
+
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || '*',
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
   optionsSuccessStatus: 200,
 };
 app.use(cors(corsOptions));
 
-// Body parser & cookie parser
-app.use(express.json());
-app.use(cookieParser());
+// Rate Limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: 'Too many requests from this IP, please try again after 15 minutes',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Apply limiter to all api routes
+app.use('/api/', limiter);
+
+// Serve uploads directory using absolute path from project root
+// This must be before other routes but after CORS/Security headers
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 // HTTP request logging – pipe through Winston
 app.use(morgan('combined', {
@@ -59,8 +97,7 @@ app.use(morgan('combined', {
 // Distributed rate limiting via Redis
 // app.use(redisRateLimiter);
 
-// Serve uploads directory specifically
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -119,6 +156,7 @@ if (require.main === module) {
     logger.info(`🚀 Server running on port ${PORT}`);
     logger.info(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
     logger.info(`🔒 CORS origin: ${process.env.FRONTEND_URL || '*'}`);
+    logger.info(`📂 Uploads path: ${path.join(process.cwd(), 'uploads')}`);
 
     // Delay migration by 3s so the pool has time to establish its first connection
     // before we run DDL. PgBouncer can reject connections attempted too early at startup.
