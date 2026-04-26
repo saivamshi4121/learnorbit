@@ -36,21 +36,6 @@ const app = express();
 // Attach request ID early so downstream middleware can use it
 app.use(requestIdMiddleware);
 
-// Security headers
-app.use(helmet({
-  crossOriginResourcePolicy: { policy: "cross-origin" } // implementation for serving static images to frontend
-}));
-
-// Body parser & cookie parser
-app.use(express.json({ limit: '10kb' })); // Limit body size
-app.use(cookieParser());
-
-// Compression for performance
-app.use(compression());
-
-// Data sanitization against XSS
-app.use(xss());
-
 // CORS configuration – origin from .env or fallback
 const allowedOrigins = [
   process.env.FRONTEND_URL,
@@ -60,17 +45,31 @@ const allowedOrigins = [
 ].filter(Boolean);
 
 const corsOptions = {
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: allowedOrigins,
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'X-CSRF-Token'],
   optionsSuccessStatus: 200,
 };
+
+// Handle preflight requests explicitly
 app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
+
+// Security headers
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" } 
+}));
+
+// Body parser & cookie parser
+app.use(express.json({ limit: '10kb' })); 
+app.use(cookieParser());
+
+// Compression for performance
+app.use(compression());
+
+// Data sanitization against XSS
+app.use(xss());
 
 // Rate Limiting
 const limiter = rateLimit({
