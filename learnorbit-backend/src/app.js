@@ -55,7 +55,8 @@ app.use(xss());
 const allowedOrigins = [
   process.env.FRONTEND_URL,
   'http://localhost:3000',
-  'https://learnorbit.vercel.app', // Adding a likely production URL
+  'https://learnorbit.vercel.app',
+  'https://learnorbit-azure.vercel.app',
 ].filter(Boolean);
 
 const corsOptions = {
