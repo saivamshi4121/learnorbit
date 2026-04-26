@@ -178,9 +178,21 @@ export default function AdminEventsPage() {
         setTitle(event.title);
         setDescription(event.description);
         // Format date for datetime-local input
-        const d = new Date(event.date);
-        const formattedDate = d.toISOString().slice(0, 16);
-        setDate(formattedDate);
+        if (event.date) {
+            try {
+                const d = new Date(event.date);
+                if (!isNaN(d.getTime())) {
+                    const formattedDate = d.toISOString().slice(0, 16);
+                    setDate(formattedDate);
+                } else {
+                    setDate("");
+                }
+            } catch (e) {
+                setDate("");
+            }
+        } else {
+            setDate("");
+        }
         setLocation(event.location || "");
         setImageUrl(event.image_url || "");
         setStatus(event.status);
@@ -656,7 +668,7 @@ export default function AdminEventsPage() {
                                         <td className="px-6 py-4">
                                             <div className="font-bold text-gray-900">{event.title}</div>
                                             <div className="text-sm text-gray-500 mt-1 flex items-center gap-1">
-                                                <Calendar className="w-3 h-3" /> {format(new Date(event.date), 'MMM d, h:mm a')}
+                                                <Calendar className="w-3 h-3" /> {event.date ? format(new Date(event.date), 'MMM d, h:mm a') : 'TBD'}
                                             </div>
                                         </td>
                                         <td className="px-6 py-4">
@@ -704,7 +716,7 @@ export default function AdminEventsPage() {
                                     <div className="flex-1 pr-2">
                                         <div className="font-bold text-gray-900 leading-tight">{event.title}</div>
                                         <div className="text-xs text-gray-500 mt-1 flex items-center gap-1">
-                                            <Calendar className="w-3 h-3" /> {format(new Date(event.date), 'MMM d, h:mm a')}
+                                            <Calendar className="w-3 h-3" /> {event.date ? format(new Date(event.date), 'MMM d, h:mm a') : 'TBD'}
                                         </div>
                                     </div>
                                     <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest ${

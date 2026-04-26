@@ -115,7 +115,7 @@ export default function EventsClient({ initialEvents }: { initialEvents: Event[]
                                         <div className="w-10 h-10 rounded-2xl bg-blue-50 flex items-center justify-center shrink-0 group-hover:bg-blue-600 group-hover:text-white transition-colors">
                                             <Calendar className="w-5 h-5" />
                                         </div>
-                                        <span className="text-sm font-bold">{format(new Date(event.date), 'MMMM d, yyyy')}</span>
+                                        <span className="text-sm font-bold">{event.date ? format(new Date(event.date), 'MMMM d, yyyy') : 'Date TBD'}</span>
                                     </div>
                                     <div className="flex items-center gap-4 text-gray-500">
                                         <div className="w-10 h-10 rounded-2xl bg-indigo-50 flex items-center justify-center shrink-0 group-hover:bg-indigo-600 group-hover:text-white transition-colors">

@@ -169,7 +169,7 @@ exports.updateRegistrationStatus = async (req, res) => {
                     name: name || 'Guest',
                     eventTitle: event.title,
                     status,
-                    eventDate: format(new Date(event.date), 'PPP p'),
+                    eventDate: event.date ? format(new Date(event.date), 'PPP p') : 'TBD',
                     location: event.location
                 });
                 logger.info(`Email service response for ${email}: ${JSON.stringify(mailRes)}`);

@@ -13,7 +13,7 @@ exports.createEvent = async (req, res) => {
             `INSERT INTO events (title, description, date, location, image_url, status, registration_fields, is_paid, price, qr_code_url)
              VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
              RETURNING *`,
-            [title, description, date, location, image_url, status || 'upcoming', JSON.stringify(registration_fields || []), is_paid || false, price || 0, qr_code_url]
+            [title, description, date || null, location, image_url, status || 'upcoming', JSON.stringify(registration_fields || []), is_paid || false, price || 0, qr_code_url]
         );
 
         res.status(201).json({ success: true, event: result.rows[0] });
@@ -70,7 +70,7 @@ exports.updateEvent = async (req, res) => {
                 updated_at = NOW()
              WHERE id = $11
              RETURNING *`,
-            [title, description, date, location, image_url, status, JSON.stringify(registration_fields), is_paid, price, qr_code_url, id]
+            [title, description, date || null, location, image_url, status, registration_fields ? JSON.stringify(registration_fields) : null, is_paid, price, qr_code_url, id]
         );
 
         if (result.rows.length === 0) {
