@@ -8,15 +8,27 @@ import { BackButton } from "@/components/ui/BackButton";
 export const dynamic = "force-dynamic";
 
 async function getBlogsData(): Promise<Blog[]> {
+    // Use a server-only env var for server-side fetches.
+    // BACKEND_URL is the internal URL of the backend (not exposed to the client).
+    // Falls back to the Next.js rewrite proxy (/api/...) when running on the same host.
+    const backendUrl =
+        process.env.BACKEND_URL ||
+        process.env.NEXT_PUBLIC_BASE_URL ||
+        "http://localhost:5000";
+
     try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/blogs`, {
-            cache: "no-store"
+        const res = await fetch(`${backendUrl}/api/blogs`, {
+            cache: "no-store",
+            next: { revalidate: 0 },
         });
-        if (!res.ok) return [];
+        if (!res.ok) {
+            console.error(`Blogs fetch failed: ${res.status} ${res.statusText}`);
+            return [];
+        }
         const data = await res.json();
         return data.blogs || [];
     } catch (e) {
-        console.error("Failed to fetch blogs", e);
+        console.error("Failed to fetch blogs:", e);
         return [];
     }
 }

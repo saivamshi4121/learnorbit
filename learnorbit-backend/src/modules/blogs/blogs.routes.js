@@ -3,16 +3,18 @@ const router = express.Router();
 const blogsController = require('./blogs.controller');
 const { protect } = require('../../middlewares/auth.middleware');
 
-// Public routes
+// Public routes (no auth required)
 router.get('/', blogsController.getPublishedBlogs);
-router.get('/:slug', blogsController.getBlogBySlug);
 
-// Protected routes
-router.use(protect);
-router.post('/', blogsController.createBlog);
-router.get('/user/me', blogsController.getUserBlogs);
-router.get('/id/:id', blogsController.getBlogById);
-router.patch('/:id', blogsController.updateBlog);
-router.delete('/:id', blogsController.deleteBlog);
+// Protected routes — must be registered BEFORE '/:slug'
+// to prevent Express from treating 'user' or 'id' as a slug param
+router.post('/', protect, blogsController.createBlog);
+router.get('/user/me', protect, blogsController.getUserBlogs);
+router.get('/id/:id', protect, blogsController.getBlogById);
+router.patch('/:id', protect, blogsController.updateBlog);
+router.delete('/:id', protect, blogsController.deleteBlog);
+
+// Public slug route — MUST come last (wildcard param)
+router.get('/:slug', blogsController.getBlogBySlug);
 
 module.exports = router;

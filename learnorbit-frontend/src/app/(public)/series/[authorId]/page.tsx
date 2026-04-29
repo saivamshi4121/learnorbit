@@ -5,14 +5,20 @@ import { Blog } from "@/lib/groupBlogs";
 export const dynamic = "force-dynamic";
 
 async function getSeriesData(authorId: string): Promise<Blog[]> {
+    const backendUrl =
+        process.env.BACKEND_URL ||
+        process.env.NEXT_PUBLIC_BASE_URL ||
+        "http://localhost:5000";
+
     try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/blogs`, {
-            cache: "no-store"
+        const res = await fetch(`${backendUrl}/api/blogs`, {
+            cache: "no-store",
+            next: { revalidate: 0 },
         });
         if (!res.ok) return [];
         const data = await res.json();
         const allBlogs: Blog[] = data.blogs || [];
-        
+
         // Filter by authorId and sort DESC
         return allBlogs
             .filter(b => String(b.author_id) === String(authorId))
