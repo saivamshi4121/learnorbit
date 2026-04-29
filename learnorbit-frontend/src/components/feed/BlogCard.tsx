@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { Calendar, User, ArrowRight, Share2 } from "lucide-react";
 import { toast } from "sonner";
