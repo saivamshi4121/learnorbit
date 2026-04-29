@@ -28,8 +28,8 @@ async function getSeriesData(authorId: string): Promise<Blog[]> {
     }
 }
 
-export default async function SeriesPage({ params }: { params: { authorId: string } }) {
-    const authorId = params.authorId;
+export default async function SeriesPage({ params }: { params: Promise<{ authorId: string }> }) {
+    const { authorId } = await params;
     const blogs = await getSeriesData(authorId);
 
     if (!blogs || blogs.length === 0) {
