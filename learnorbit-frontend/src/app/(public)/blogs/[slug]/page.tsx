@@ -7,6 +7,9 @@ import { Calendar, User, ArrowLeft, Clock, Share2 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import Link from "next/link";
+import { marked } from "marked";
+
+marked.setOptions({ breaks: true, gfm: true });
 
 export default function BlogDetailPage() {
     const params = useParams();
@@ -105,11 +108,18 @@ export default function BlogDetailPage() {
                     </div>
                 )}
 
-                <article className="prose prose-lg prose-blue max-w-none">
-                    {/* Basic Markdown Rendering fallback */}
-                    <div className="whitespace-pre-wrap font-serif leading-relaxed text-gray-800">
-                        {blog.content}
-                    </div>
+                <article>
+                    <div
+                        className="prose prose-slate prose-lg max-w-none
+                            prose-headings:font-black prose-headings:tracking-tight
+                            prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl
+                            prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline
+                            prose-code:bg-slate-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:font-mono prose-code:before:content-none prose-code:after:content-none
+                            prose-pre:bg-slate-900 prose-pre:text-slate-100 prose-pre:rounded-xl
+                            prose-blockquote:border-blue-500 prose-blockquote:bg-blue-50 prose-blockquote:rounded-r-xl prose-blockquote:not-italic
+                            prose-img:rounded-xl prose-img:shadow-md"
+                        dangerouslySetInnerHTML={{ __html: marked(blog.content || "") as string }}
+                    />
                 </article>
             </div>
         </div>
