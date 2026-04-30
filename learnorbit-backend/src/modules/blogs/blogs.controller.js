@@ -35,6 +35,8 @@ exports.createBlog = async (req, res) => {
 exports.getPublishedBlogs = async (req, res) => {
   try {
     const blogs = await BlogsRepository.findPublished();
+    // Allow CDN/Vercel edge cache to serve this for 60 s, then revalidate in background.
+    res.set('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
     res.json({ success: true, blogs });
   } catch (error) {
     logger.error('Error in getPublishedBlogs:', error);
@@ -51,6 +53,8 @@ exports.getBlogBySlug = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Blog not found' });
     }
     
+    // Cache individual blog pages on CDN for 60 s.
+    res.set('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
     res.json({ success: true, blog });
   } catch (error) {
     logger.error('Error in getBlogBySlug:', error);

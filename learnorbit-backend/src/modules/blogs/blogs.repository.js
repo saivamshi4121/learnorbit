@@ -19,9 +19,21 @@ class BlogsRepository {
     return rows[0];
   }
 
+  // Lightweight listing query — omits full content to reduce payload size.
+  // The card preview is generated from the excerpt column on the client.
   async findPublished() {
     const sql = `
-      SELECT b.*, u.name as author_name 
+      SELECT
+        b.id,
+        b.title,
+        b.slug,
+        b.cover_image,
+        b.author_id,
+        b.published,
+        b.created_at,
+        b.updated_at,
+        u.name AS author_name,
+        LEFT(b.content, 300) AS excerpt
       FROM blogs b
       JOIN users u ON b.author_id = u.id
       WHERE b.published = TRUE

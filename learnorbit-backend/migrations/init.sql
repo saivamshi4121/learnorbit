@@ -125,5 +125,14 @@ CREATE INDEX IF NOT EXISTS idx_registrations_status ON event_registrations(statu
 ALTER TABLE events ADD COLUMN IF NOT EXISTS certificate_settings JSONB DEFAULT '{}';
 ALTER TABLE events ALTER COLUMN date DROP NOT NULL;
 
+-- ─── Blogs performance indexes ──────────────────────────────────────────────
+-- Partial index: covers the listing query (WHERE published = TRUE ORDER BY created_at DESC)
+CREATE INDEX IF NOT EXISTS idx_blogs_published_created
+  ON blogs (created_at DESC)
+  WHERE published = TRUE;
 
+-- Index on slug for O(log n) single-blog lookups
+CREATE INDEX IF NOT EXISTS idx_blogs_slug ON blogs (slug);
 
+-- Index on author_id for "my blogs" queries
+CREATE INDEX IF NOT EXISTS idx_blogs_author_id ON blogs (author_id);

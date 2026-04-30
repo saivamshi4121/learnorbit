@@ -5,7 +5,10 @@ import { ArrowRight } from "lucide-react";
 
 import { BackButton } from "@/components/ui/BackButton";
 
-export const dynamic = "force-dynamic";
+// Revalidate the page every 60 seconds (ISR).
+// New/updated blogs will appear within 1 minute without a full cold fetch on every request.
+export const revalidate = 60;
+
 
 async function getBlogsData(): Promise<Blog[]> {
     // Use a server-only env var for server-side fetches.
@@ -18,8 +21,8 @@ async function getBlogsData(): Promise<Blog[]> {
 
     try {
         const res = await fetch(`${backendUrl}/api/blogs`, {
-            cache: "no-store",
-            next: { revalidate: 0 },
+            // ISR: Next.js will serve from cache and revalidate in the background.
+            next: { revalidate: 60 },
         });
         if (!res.ok) {
             console.error(`Blogs fetch failed: ${res.status} ${res.statusText}`);

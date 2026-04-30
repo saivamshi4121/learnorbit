@@ -5,7 +5,8 @@ export interface Blog {
     author_id: string;
     author_name?: string;
     created_at: string;
-    content?: string;
+    content?: string;    // only available on detail pages
+    excerpt?: string;    // pre-truncated (300 chars) from the list API
     slug: string;
 }
 

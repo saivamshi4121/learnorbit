@@ -52,7 +52,8 @@ export function BlogCard({ blog }: { blog: Blog }) {
                     </div>
                 </div>
                 <p className="text-gray-600 mb-6 line-clamp-3">
-                    {blog.content ? blog.content.substring(0, 200) + '...' : ''}
+                    {(blog.excerpt || blog.content || '').replace(/[#*`>\[\]]/g, '').substring(0, 200)}
+                    {(blog.excerpt || blog.content || '').length > 200 ? '…' : ''}
                 </p>
                 <div className="flex items-center font-semibold text-blue-600 group-hover:gap-2 transition-all">
                     Read Article <ArrowRight className="w-4 h-4 ml-1" />
